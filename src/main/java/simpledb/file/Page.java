@@ -50,7 +50,7 @@ public class Page {
 
     public static int maxLength(int strlen) {
         float bytesPerChar = CHARSET.newEncoder().maxBytesPerChar();
-        return Integer.BYTES + (strlen * (int)bytesPerChar);
+        return Integer.BYTES + (strlen * (int) bytesPerChar);
     }
 
     protected ByteBuffer contents() {
