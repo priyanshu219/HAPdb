@@ -6,16 +6,16 @@ import db.log.LogManager;
 
 import java.io.IOException;
 
-public class BufferMgr {
+public class BufferManager {
     private final Buffer[] bufferPool;
     private int totalAvailable;
     private static final long MAX_TIME = 10000;
 
-    public BufferMgr(FileMgr fileMgr, LogMgr logMgr, int totalBuffers) {
+    public BufferManager(FileManager fileManager, LogManager logManager, int totalBuffers) {
         this.bufferPool = new Buffer[totalBuffers];
         this.totalAvailable = totalBuffers;
         for (int i = 0; i < totalBuffers; i++) {
-            bufferPool[i] = new Buffer(fileMgr, logMgr);
+            bufferPool[i] = new Buffer(fileManager, logManager);
         }
     }
 

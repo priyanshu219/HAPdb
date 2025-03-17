@@ -6,13 +6,13 @@ import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FileMgr {
+public class FileManager {
     private final File dbDirectory;
     private final int blocksize;
     private final boolean isNew;
     private final Map<String, RandomAccessFile> openFiles = new HashMap<>();
 
-    public FileMgr(File dbDirectory, int blocksize) {
+    public FileManager(File dbDirectory, int blocksize) {
         this.dbDirectory = dbDirectory;
         this.blocksize = blocksize;
         isNew = !dbDirectory.exists();

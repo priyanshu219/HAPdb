@@ -8,18 +8,18 @@ import db.log.LogManager;
 import java.io.IOException;
 
 public class Buffer {
-    private final FileMgr fileMgr;
-    private final LogMgr logMgr;
+    private final FileManager fileManager;
+    private final LogManager logManager;
     private final Page contents;
     private Block block;
     private int pins;
     private int txnnum;
     private int lsn;
 
-    public Buffer(FileMgr fileMgr, LogMgr logMgr) {
-        this.fileMgr = fileMgr;
-        this.logMgr = logMgr;
-        contents = new Page(fileMgr.getBlocksize());
+    public Buffer(FileManager fileManager, LogManager logManager) {
+        this.fileManager = fileManager;
+        this.logManager = logManager;
+        contents = new Page(fileManager.getBlocksize());
         this.block = null;
         this.pins = 0;
         this.txnnum = -1;
@@ -52,14 +52,14 @@ public class Buffer {
     void assignToBlock(Block block) throws IOException {
         flush();
         this.block = block;
-        fileMgr.read(block, contents);
+        fileManager.read(block, contents);
         pins = 0;
     }
 
     void flush() {
         if (this.txnnum >= 0) {
-            logMgr.flush(lsn);
-            fileMgr.write(block, contents);
+            logManager.flush(lsn);
+            fileManager.write(block, contents);
             txnnum = -1;
         }
     }
