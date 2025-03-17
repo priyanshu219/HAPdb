@@ -1,4 +1,4 @@
-package simpledb.log;
+package db.log;
 
 public class LogTest {
     private static LogMgr logMgr;

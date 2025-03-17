@@ -1,4 +1,4 @@
-package simpledb.log;
+package db.log;
 
 import simpledb.file.Block;
 import simpledb.file.FileMgr;

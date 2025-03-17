@@ -1,4 +1,4 @@
-package simpledb.file;
+package db.file;
 
 import java.io.File;
 import java.io.IOException;

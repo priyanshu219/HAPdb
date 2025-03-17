@@ -1,8 +1,8 @@
-package simpledb.buffer;
+package db.buffer;
 
-import simpledb.file.Block;
-import simpledb.file.FileMgr;
-import simpledb.log.LogMgr;
+import db.file.Block;
+import db.file.FileManager;
+import db.log.LogManager;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package simpledb.file;
+package db.file;
 
 public class Block {
     private final String filename;
