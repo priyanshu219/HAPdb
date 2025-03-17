@@ -7,25 +7,25 @@ import db.file.Page;
 import java.io.IOException;
 import java.util.Iterator;
 
-public class LogMgr {
-    private FileMgr fileMgr;
+public class LogManager {
+    private FileManager fileManager;
     private String logFile;
     private final Page logPage;
     private Block currentBlock;
     private int latestLSN;
     private int lastSavedLSN;
 
-    public LogMgr(FileMgr fileMgr, String logFile) throws IOException {
+    public LogManager(FileManager fileManager, String logFile) throws IOException {
         this.latestLSN = 0;
         this.lastSavedLSN = 0;
-        byte[] b = new byte[fileMgr.getBlocksize()];
+        byte[] b = new byte[fileManager.getBlocksize()];
         this.logPage = new Page(b);
-        int logSize = fileMgr.length(logFile);
+        int logSize = fileManager.length(logFile);
         if (logSize == 0) {
             currentBlock = appendNewBlock();
         } else {
             currentBlock = new Block(logFile, logSize - 1);
-            fileMgr.read(currentBlock, logPage);
+            fileManager.read(currentBlock, logPage);
         }
     }
 
@@ -37,7 +37,7 @@ public class LogMgr {
 
     public Iterator<byte[]> iterator() throws IOException {
         flush();
-        return new LogIterator(fileMgr, currentBlock);
+        return new LogIterator(fileManager, currentBlock);
     }
 
     public synchronized int append(byte[] logRecord) {
@@ -60,14 +60,14 @@ public class LogMgr {
     }
 
     private Block appendNewBlock() {
-        Block block = fileMgr.append(logFile);
-        logPage.setInt(0, fileMgr.getBlocksize());
-        fileMgr.write(block, logPage);
+        Block block = fileManager.append(logFile);
+        logPage.setInt(0, fileManager.getBlocksize());
+        fileManager.write(block, logPage);
         return block;
     }
 
     private void flush() {
-        fileMgr.write(currentBlock, logPage);
+        fileManager.write(currentBlock, logPage);
         lastSavedLSN = latestLSN;
     }
 }
