@@ -38,11 +38,11 @@ public class FileManager {
         }
     }
 
-    public synchronized void write(Block blk, Page p) {
+    public synchronized void write(Block blk, Page page) {
         try {
             RandomAccessFile f = getFile(blk.getFilename());
             f.seek((long) blk.getBlockNumber() * blocksize);
-            f.getChannel().write(p.contents());
+            f.getChannel().write(page.contents());
         } catch (IOException e) {
             throw new RuntimeException("cannot write block " + blk);
         }
