@@ -28,46 +28,46 @@ public class FileManager {
         }
     }
 
-    public synchronized void read(Block blk, Page p) throws IOException {
+    public synchronized void read(Block block, Page p) throws IOException {
         try {
-            RandomAccessFile f = getFile(blk.getFilename());
-            f.seek((long) blk.getBlockNumber() * blocksize);
-            f.getChannel().read(p.contents());
+            RandomAccessFile file = getFile(block.getFilename());
+            file.seek((long) block.getBlockNumber() * blocksize);
+            file.getChannel().read(p.contents());
         } catch (IOException e) {
-            throw new RuntimeException("cannot read block " + blk);
+            throw new RuntimeException("cannot read block " + block);
         }
     }
 
-    public synchronized void write(Block blk, Page page) {
+    public synchronized void write(Block block, Page page) {
         try {
-            RandomAccessFile f = getFile(blk.getFilename());
-            f.seek((long) blk.getBlockNumber() * blocksize);
-            f.getChannel().write(page.contents());
+            RandomAccessFile file = getFile(block.getFilename());
+            file.seek((long) block.getBlockNumber() * blocksize);
+            file.getChannel().write(page.contents());
         } catch (IOException e) {
-            throw new RuntimeException("cannot write block " + blk);
+            throw new RuntimeException("cannot write block " + block);
         }
     }
 
     public synchronized Block append(String filename) {
         int newblknum = length(filename);
-        Block blk = new Block(filename, newblknum);
-        byte[] b = new byte[blocksize];
+        Block block = new Block(filename, newblknum);
+        byte[] bytes = new byte[blocksize];
         try {
-            RandomAccessFile f = getFile(blk.getFilename());
-            f.seek((long) blk.getBlockNumber() * blocksize);
-            f.write(b);
+            RandomAccessFile file = getFile(block.getFilename());
+            file.seek((long) block.getBlockNumber() * blocksize);
+            file.write(bytes);
 
-            return blk;
+            return block;
         } catch (IOException e) {
-            throw new RuntimeException("cannot append block " + blk);
+            throw new RuntimeException("cannot append block " + block);
         }
     }
 
     //This function return the block number to whom we are updating
     public int length(String filename) {
         try {
-            RandomAccessFile f = getFile(filename);
-            return (int) (f.length() / blocksize);
+            RandomAccessFile file = getFile(filename);
+            return (int) (file.length() / blocksize);
         } catch (IOException e) {
             throw new RuntimeException("cannot access " + filename);
         }
@@ -82,12 +82,12 @@ public class FileManager {
     }
 
     private RandomAccessFile getFile(String filename) throws IOException {
-        RandomAccessFile f = openFiles.get(filename);
-        if (null == f) {
+        RandomAccessFile file = openFiles.get(filename);
+        if (null == file) {
             File dbTable = new File(dbDirectory, filename);
-            f = new RandomAccessFile(dbTable, "rws");
-            openFiles.put(filename, f);
+            file = new RandomAccessFile(dbTable, "rws");
+            openFiles.put(filename, file);
         }
-        return f;
+        return file;
     }
 }
