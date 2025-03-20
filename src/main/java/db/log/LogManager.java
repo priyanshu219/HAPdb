@@ -8,14 +8,14 @@ import java.io.IOException;
 import java.util.Iterator;
 
 public class LogManager {
-    private FileManager fileManager;
-    private String logFile;
+    private final FileManager fileManager;
+    private final String logFile;
     private final Page logPage;
     private Block currentBlock;
     private int latestLSN;
     private int lastSavedLSN;
 
-    public LogManager(FileManager fileManager, String logFile) throws IOException {
+    public LogManager(FileManager fileManager, String logFile) {
         this.fileManager = fileManager;
         this.logFile = logFile;
         this.latestLSN = 0;

@@ -8,8 +8,8 @@ public class Page {
     private final ByteBuffer byteBuffer;
     public static final Charset CHARSET = StandardCharsets.US_ASCII;
 
-    public Page(int blocksize) {
-        this.byteBuffer = ByteBuffer.allocateDirect(blocksize);
+    public Page(int blockSize) {
+        this.byteBuffer = ByteBuffer.allocateDirect(blockSize);
     }
 
     public Page(byte[] bytes) {
@@ -39,8 +39,8 @@ public class Page {
     }
 
     public String getString(int offset) {
-        byte[] b = getBytes(offset);
-        return new String(b, CHARSET);
+        byte[] bytes = getBytes(offset);
+        return new String(bytes, CHARSET);
     }
 
     public void setString(int offset, String value) {
