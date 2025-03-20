@@ -54,7 +54,7 @@ public class Schema {
         return infoMap.get(fieldName).length;
     }
 
-    private class FieldInfo {
+    private static class FieldInfo {
         int type;
         int length;
 
