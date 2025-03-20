@@ -1,16 +1,16 @@
 package db.file;
 
 public class Block {
-    private final String filename;
+    private final String fileName;
     private final int blockNumber;
 
-    public Block(String filename, int blockNumber) {
-        this.filename = filename;
+    public Block(String fileName, int blockNumber) {
+        this.fileName = fileName;
         this.blockNumber = blockNumber;
     }
 
-    public String getFilename() {
-        return filename;
+    public String getFileName() {
+        return fileName;
     }
 
     public int getBlockNumber() {
@@ -20,12 +20,12 @@ public class Block {
     @Override
     public boolean equals(Object obj) {
         Block blk = (Block) obj;
-        return filename.equals(blk.getFilename()) && blockNumber == blk.getBlockNumber();
+        return fileName.equals(blk.getFileName()) && blockNumber == blk.getBlockNumber();
     }
 
     @Override
     public String toString() {
-        return "[file " + filename + ", block " + blockNumber + "]";
+        return "[file " + fileName + ", block " + blockNumber + "]";
     }
 
     @Override

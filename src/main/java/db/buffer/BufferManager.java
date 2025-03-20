@@ -5,6 +5,7 @@ import db.file.FileManager;
 import db.log.LogManager;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class BufferManager {
     private final Buffer[] bufferPool;
@@ -14,9 +15,7 @@ public class BufferManager {
     public BufferManager(FileManager fileManager, LogManager logManager, int totalBuffers) {
         this.bufferPool = new Buffer[totalBuffers];
         this.totalAvailable = totalBuffers;
-        for (int i = 0; i < totalBuffers; i++) {
-            bufferPool[i] = new Buffer(fileManager, logManager);
-        }
+        Arrays.fill(bufferPool, new Buffer(fileManager, logManager));
     }
 
     public synchronized int getTotalAvailable() {

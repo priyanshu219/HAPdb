@@ -1,4 +1,4 @@
-package db.tx;
+package db.transaction;
 
 import db.buffer.Buffer;
 import db.buffer.BufferManager;

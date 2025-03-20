@@ -1,7 +1,7 @@
-package db.tx.recovery;
+package db.transaction.recovery;
 
 import db.file.Page;
-import db.tx.Transaction;
+import db.transaction.Transaction;
 
 import java.io.IOException;
 import java.util.Map;

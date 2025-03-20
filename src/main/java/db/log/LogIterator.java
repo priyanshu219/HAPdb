@@ -29,7 +29,7 @@ class LogIterator implements Iterator<byte[]> {
     @Override
     public byte[] next() {
         if (currentPosition == fileManager.getBlocksize()) {
-            block = new Block(block.getFilename(), block.getBlockNumber() - 1);
+            block = new Block(block.getFileName(), block.getBlockNumber() - 1);
             try {
                 moveToBlock(block);
             } catch (IOException e) {

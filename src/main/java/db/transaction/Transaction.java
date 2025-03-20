@@ -1,4 +1,4 @@
-package db.tx;
+package db.transaction;
 
 import db.buffer.Buffer;
 import db.buffer.BufferManager;
@@ -6,8 +6,8 @@ import db.file.Block;
 import db.file.FileManager;
 import db.file.Page;
 import db.log.LogManager;
-import db.tx.concurrency.ConcurrencyManager;
-import db.tx.recovery.RecoveryManager;
+import db.transaction.concurrency.ConcurrencyManager;
+import db.transaction.recovery.RecoveryManager;
 
 import java.io.IOException;
 

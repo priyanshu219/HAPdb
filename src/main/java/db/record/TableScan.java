@@ -1,8 +1,7 @@
 package db.record;
 
 import db.file.Block;
-import db.tx.BufferList;
-import db.tx.Transaction;
+import db.transaction.Transaction;
 
 import java.io.IOException;
 

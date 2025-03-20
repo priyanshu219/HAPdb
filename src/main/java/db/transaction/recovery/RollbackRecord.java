@@ -1,20 +1,20 @@
-package db.tx.recovery;
+package db.transaction.recovery;
 
 import db.file.Page;
 import db.log.LogManager;
-import db.tx.Transaction;
+import db.transaction.Transaction;
 
-public class CommitRecord implements LogRecord {
+public class RollbackRecord implements LogRecord {
     private final int txNum;
 
-    public CommitRecord(Page page) {
+    public RollbackRecord(Page page) {
         int transactionPosition = Integer.BYTES;
         this.txNum = page.getInt(transactionPosition);
     }
 
     @Override
     public RecordType getRecordType() {
-        return RecordType.COMMIT;
+        return RecordType.ROLLBACK;
     }
 
     @Override

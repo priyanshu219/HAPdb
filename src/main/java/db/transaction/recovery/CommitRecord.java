@@ -1,20 +1,20 @@
-package db.tx.recovery;
+package db.transaction.recovery;
 
 import db.file.Page;
 import db.log.LogManager;
-import db.tx.Transaction;
+import db.transaction.Transaction;
 
-public class StartRecord implements LogRecord {
+public class CommitRecord implements LogRecord {
     private final int txNum;
 
-    public StartRecord(Page page) {
+    public CommitRecord(Page page) {
         int transactionPosition = Integer.BYTES;
         this.txNum = page.getInt(transactionPosition);
     }
 
     @Override
     public RecordType getRecordType() {
-        return RecordType.START;
+        return RecordType.COMMIT;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class StartRecord implements LogRecord {
 
         byte[] record = new byte[recordLen];
         Page page = new Page(record);
-        page.setInt(0, RecordType.START.ordinal());
+        page.setInt(0, RecordType.COMMIT.ordinal());
         page.setInt(transactionPosition, txNum);
 
         return logManager.append(record);

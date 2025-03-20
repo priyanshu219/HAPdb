@@ -1,7 +1,7 @@
 package db.record;
 
 import db.file.Block;
-import db.tx.Transaction;
+import db.transaction.Transaction;
 
 import java.io.IOException;
 import static java.sql.Types.INTEGER;

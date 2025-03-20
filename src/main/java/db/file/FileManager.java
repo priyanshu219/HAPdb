@@ -30,7 +30,7 @@ public class FileManager {
 
     public synchronized void read(Block block, Page p) throws IOException {
         try {
-            RandomAccessFile file = getFile(block.getFilename());
+            RandomAccessFile file = getFile(block.getFileName());
             file.seek((long) block.getBlockNumber() * blocksize);
             file.getChannel().read(p.contents());
         } catch (IOException e) {
@@ -40,7 +40,7 @@ public class FileManager {
 
     public synchronized void write(Block block, Page page) {
         try {
-            RandomAccessFile file = getFile(block.getFilename());
+            RandomAccessFile file = getFile(block.getFileName());
             file.seek((long) block.getBlockNumber() * blocksize);
             file.getChannel().write(page.contents());
         } catch (IOException e) {
@@ -53,7 +53,7 @@ public class FileManager {
         Block block = new Block(filename, newblknum);
         byte[] bytes = new byte[blocksize];
         try {
-            RandomAccessFile file = getFile(block.getFilename());
+            RandomAccessFile file = getFile(block.getFileName());
             file.seek((long) block.getBlockNumber() * blocksize);
             file.write(bytes);
 

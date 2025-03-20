@@ -1,9 +1,9 @@
-package db.tx.recovery;
+package db.transaction.recovery;
 
 import db.file.Block;
 import db.file.Page;
 import db.log.LogManager;
-import db.tx.Transaction;
+import db.transaction.Transaction;
 
 import java.io.IOException;
 
@@ -55,7 +55,7 @@ public class SetIntRecord implements LogRecord{
     public static int writeToLog(LogManager logManager, int txNum, Block block, int offset, int value) {
         int transactionPosition = Integer.BYTES;
         int filePosition = transactionPosition + Integer.BYTES;
-        int blockPosition = filePosition + Page.maxLength(block.getFilename().length());
+        int blockPosition = filePosition + Page.maxLength(block.getFileName().length());
         int offsetPosition = blockPosition + Integer.BYTES;
         int valuePosition = offsetPosition + Integer.BYTES;
         int recordLength = valuePosition + Integer.BYTES;
@@ -64,7 +64,7 @@ public class SetIntRecord implements LogRecord{
         Page page = new Page(record);
         page.setInt(0, RecordType.SETINT.ordinal());
         page.setInt(transactionPosition, txNum);
-        page.setString(filePosition, block.getFilename());
+        page.setString(filePosition, block.getFileName());
         page.setInt(blockPosition, block.getBlockNumber());
         page.setInt(offsetPosition, offset);
         page.setInt(valuePosition, value);

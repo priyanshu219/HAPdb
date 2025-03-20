@@ -18,8 +18,8 @@ public class LogManager {
     public LogManager(FileManager fileManager, String logFile) throws IOException {
         this.latestLSN = 0;
         this.lastSavedLSN = 0;
-        byte[] b = new byte[fileManager.getBlocksize()];
-        this.logPage = new Page(b);
+        byte[] bytes = new byte[fileManager.getBlocksize()];
+        this.logPage = new Page(bytes);
         int logSize = fileManager.length(logFile);
         if (logSize == 0) {
             currentBlock = appendNewBlock();

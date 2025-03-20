@@ -1,11 +1,11 @@
-package db.tx.recovery;
+package db.transaction.recovery;
 
 import db.buffer.Buffer;
 import db.buffer.BufferManager;
 import db.file.Block;
 import db.log.LogManager;
-import db.tx.Transaction;
-import db.tx.recovery.LogRecord.RecordType;
+import db.transaction.Transaction;
+import db.transaction.recovery.LogRecord.RecordType;
 
 import java.io.IOException;
 import java.util.ArrayList;

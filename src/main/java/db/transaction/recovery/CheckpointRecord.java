@@ -1,8 +1,8 @@
-package db.tx.recovery;
+package db.transaction.recovery;
 
 import db.file.Page;
 import db.log.LogManager;
-import db.tx.Transaction;
+import db.transaction.Transaction;
 
 public class CheckpointRecord implements LogRecord {
 

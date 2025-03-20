@@ -5,37 +5,37 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 public class Page {
-    private final ByteBuffer bb;
+    private final ByteBuffer byteBuffer;
     public static final Charset CHARSET = StandardCharsets.US_ASCII;
 
     public Page(int blocksize) {
-        this.bb = ByteBuffer.allocateDirect(blocksize);
+        this.byteBuffer = ByteBuffer.allocateDirect(blocksize);
     }
 
-    public Page(byte[] b) {
-        bb = ByteBuffer.wrap(b);
+    public Page(byte[] bytes) {
+        byteBuffer = ByteBuffer.wrap(bytes);
     }
 
     public int getInt(int offset) {
-        return bb.getInt(offset);
+        return byteBuffer.getInt(offset);
     }
 
     public void setInt(int offset, int n) {
-        bb.putInt(offset, n);
+        byteBuffer.putInt(offset, n);
     }
 
     public byte[] getBytes(int offset) {
-        bb.position(offset);
-        int length = bb.getInt();
-        byte[] b = new byte[length];
-        bb.get(b);
-        return b;
+        byteBuffer.position(offset);
+        int length = byteBuffer.getInt();
+        byte[] bytes = new byte[length];
+        byteBuffer.get(bytes);
+        return bytes;
     }
 
-    public void setBytes(int offset, byte[] b) {
-        bb.position(offset);
-        bb.putInt(b.length);
-        bb.put(b);
+    public void setBytes(int offset, byte[] bytes) {
+        byteBuffer.position(offset);
+        byteBuffer.putInt(bytes.length);
+        byteBuffer.put(bytes);
     }
 
     public String getString(int offset) {
@@ -43,9 +43,9 @@ public class Page {
         return new String(b, CHARSET);
     }
 
-    public void setString(int offset, String s) {
-        byte[] b = s.getBytes(CHARSET);
-        setBytes(offset, b);
+    public void setString(int offset, String value) {
+        byte[] bytes = value.getBytes(CHARSET);
+        setBytes(offset, bytes);
     }
 
     public static int maxLength(int strlen) {
@@ -54,7 +54,7 @@ public class Page {
     }
 
     protected ByteBuffer contents() {
-        bb.position(0);
-        return bb;
+        byteBuffer.position(0);
+        return byteBuffer;
     }
 }
