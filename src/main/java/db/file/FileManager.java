@@ -28,11 +28,11 @@ public class FileManager {
         }
     }
 
-    public synchronized void read(Block block, Page p) throws IOException {
+    public synchronized void read(Block block, Page page) {
         try {
             RandomAccessFile file = getFile(block.getFileName());
             file.seek((long) block.getBlockNumber() * blocksize);
-            file.getChannel().read(p.contents());
+            file.getChannel().read(page.contents());
         } catch (IOException e) {
             throw new RuntimeException("cannot read block " + block);
         }

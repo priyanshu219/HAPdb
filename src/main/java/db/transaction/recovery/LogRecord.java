@@ -14,7 +14,7 @@ public interface LogRecord {
         COMMIT,
         ROLLBACK,
         SETINT,
-        SETSTRING;
+        SETSTRING
     }
 
     RecordType getRecordType();

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.sql.Types.INTEGER;
-import static java.sql.Types.VARCHAR;
 
 public class Layout {
     private final Schema schema;
