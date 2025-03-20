@@ -105,7 +105,7 @@ public class Transaction {
         return fileManager.append(fileName);
     }
 
-    public int blockSize() {
+    public int getBlockSize() {
         return fileManager.getBlocksize();
     }
 
