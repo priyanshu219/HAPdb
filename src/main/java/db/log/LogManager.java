@@ -16,6 +16,8 @@ public class LogManager {
     private int lastSavedLSN;
 
     public LogManager(FileManager fileManager, String logFile) throws IOException {
+        this.fileManager = fileManager;
+        this.logFile = logFile;
         this.latestLSN = 0;
         this.lastSavedLSN = 0;
         byte[] bytes = new byte[fileManager.getBlocksize()];
