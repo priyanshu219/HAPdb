@@ -17,7 +17,7 @@ class FileManagerTest {
         page1.setInt(position2, 2109);
         fileManager.write(block, page1);
 
-        Page page2 = new Page(fileManager.getBlockSize());x
+        Page page2 = new Page(fileManager.getBlockSize());
         fileManager.read(block, page2);
 
         assert page2.getInt(position2) == 2109;
