@@ -1,26 +1,13 @@
 package db.file;
 
-public class Block {
-    private final String fileName;
-    private final int blockNumber;
-
-    public Block(String fileName, int blockNumber) {
-        this.fileName = fileName;
-        this.blockNumber = blockNumber;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public int getBlockNumber() {
-        return blockNumber;
-    }
+public record Block(String fileName, int blockNumber) {
 
     @Override
     public boolean equals(Object obj) {
-        Block blk = (Block) obj;
-        return fileName.equals(blk.getFileName()) && blockNumber == blk.getBlockNumber();
+        if (!(obj instanceof Block block)) {
+            return false;
+        }
+        return fileName.equals(block.fileName()) && blockNumber == block.blockNumber();
     }
 
     @Override
