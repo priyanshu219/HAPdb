@@ -54,7 +54,12 @@ public class LogManager {
         // filling the page from right to left
         // in every iteration recordPosition becomes small to fulfil the condition
         int recordPosition = boundary - bytesNeeded;
+
+        //using setBytes we are appending length of the record
+        // logRecord: Integer.Bytes(string length) + stringValue.length() + Integer.Bytes(intValue)
         logPage.setBytes(recordPosition, logRecord);
+
+        //setting the offset of last record at 0 offset of logPage
         logPage.setInt(0, recordPosition);
         latestLSN += 1;
         return latestLSN;
