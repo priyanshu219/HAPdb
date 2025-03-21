@@ -67,6 +67,7 @@ public class LockTable {
         return (iVal == null) ? 0 : iVal;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean waitingTooLong(long startTime) {
         return (System.currentTimeMillis() - startTime) > MAX_TIME;
     }

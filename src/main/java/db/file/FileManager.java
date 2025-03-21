@@ -6,6 +6,7 @@ import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class FileManager {
     private final File dbDirectory;
     private final int blocksize;
@@ -30,8 +31,8 @@ public class FileManager {
 
     public synchronized void read(Block block, Page page) {
         try {
-            RandomAccessFile file = getFile(block.getFileName());
-            file.seek((long) block.getBlockNumber() * blocksize);
+            RandomAccessFile file = getFile(block.fileName());
+            file.seek((long) block.blockNumber() * blocksize);
             file.getChannel().read(page.contents());
         } catch (IOException e) {
             throw new RuntimeException("cannot read block " + block);
@@ -40,8 +41,8 @@ public class FileManager {
 
     public synchronized void write(Block block, Page page) {
         try {
-            RandomAccessFile file = getFile(block.getFileName());
-            file.seek((long) block.getBlockNumber() * blocksize);
+            RandomAccessFile file = getFile(block.fileName());
+            file.seek((long) block.blockNumber() * blocksize);
             file.getChannel().write(page.contents());
         } catch (IOException e) {
             throw new RuntimeException("cannot write block " + block);
@@ -53,8 +54,8 @@ public class FileManager {
         Block block = new Block(filename, newblknum);
         byte[] bytes = new byte[blocksize];
         try {
-            RandomAccessFile file = getFile(block.getFileName());
-            file.seek((long) block.getBlockNumber() * blocksize);
+            RandomAccessFile file = getFile(block.fileName());
+            file.seek((long) block.blockNumber() * blocksize);
             file.write(bytes);
 
             return block;
