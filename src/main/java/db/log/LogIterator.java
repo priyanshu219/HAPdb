@@ -15,19 +15,19 @@ class LogIterator implements Iterator<byte[]> {
     public LogIterator(FileManager fileManager, Block block) {
         this.fileManager = fileManager;
         this.block = block;
-        byte[] bytes = new byte[fileManager.getBlocksize()];
+        byte[] bytes = new byte[fileManager.getBlockSize()];
         page = new Page(bytes);
         moveToBlock(block);
     }
 
     @Override
     public boolean hasNext() {
-        return (currentPosition < fileManager.getBlocksize()) || (block.blockNumber() > 0);
+        return (currentPosition < fileManager.getBlockSize()) || (block.blockNumber() > 0);
     }
 
     @Override
     public byte[] next() {
-        if (currentPosition == fileManager.getBlocksize()) {
+        if (currentPosition == fileManager.getBlockSize()) {
             block = new Block(block.fileName(), block.blockNumber() - 1);
             moveToBlock(block);
         }

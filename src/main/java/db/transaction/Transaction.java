@@ -106,7 +106,7 @@ public class Transaction {
     }
 
     public int getBlockSize() {
-        return fileManager.getBlocksize();
+        return fileManager.getBlockSize();
     }
 
     public int availableBuffers() {

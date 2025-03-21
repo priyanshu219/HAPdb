@@ -17,7 +17,7 @@ public class Buffer {
     public Buffer(FileManager fileManager, LogManager logManager) {
         this.fileManager = fileManager;
         this.logManager = logManager;
-        contents = new Page(fileManager.getBlocksize());
+        contents = new Page(fileManager.getBlockSize());
         this.block = null;
         this.pins = 0;
         this.txnnum = -1;

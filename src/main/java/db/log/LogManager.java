@@ -19,7 +19,7 @@ public class LogManager {
         this.logFile = logFile;
         this.latestLSN = 0;
         this.lastSavedLSN = 0;
-        byte[] bytes = new byte[fileManager.getBlocksize()];
+        byte[] bytes = new byte[fileManager.getBlockSize()];
         this.logPage = new Page(bytes);
         int logSize = fileManager.length(logFile);
         if (logSize == 0) {
@@ -62,7 +62,7 @@ public class LogManager {
 
     private Block appendNewBlock() {
         Block block = fileManager.append(logFile);
-        logPage.setInt(0, fileManager.getBlocksize());
+        logPage.setInt(0, fileManager.getBlockSize());
         fileManager.write(block, logPage);
         return block;
     }

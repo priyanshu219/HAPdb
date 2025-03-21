@@ -9,13 +9,13 @@ import java.util.Map;
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class FileManager {
     private final File dbDirectory;
-    private final int blocksize;
+    private final int blockSize;
     private final boolean isNew;
     private final Map<String, RandomAccessFile> openFiles = new HashMap<>();
 
-    public FileManager(File dbDirectory, int blocksize) {
+    public FileManager(File dbDirectory, int blockSize) {
         this.dbDirectory = dbDirectory;
-        this.blocksize = blocksize;
+        this.blockSize = blockSize;
         isNew = !dbDirectory.exists();
 
         if (isNew) {
@@ -32,7 +32,7 @@ public class FileManager {
     public synchronized void read(Block block, Page page) {
         try {
             RandomAccessFile file = getFile(block.fileName());
-            file.seek((long) block.blockNumber() * blocksize);
+            file.seek((long) block.blockNumber() * blockSize);
             file.getChannel().read(page.contents());
         } catch (IOException e) {
             throw new RuntimeException("cannot read block " + block);
@@ -42,7 +42,7 @@ public class FileManager {
     public synchronized void write(Block block, Page page) {
         try {
             RandomAccessFile file = getFile(block.fileName());
-            file.seek((long) block.blockNumber() * blocksize);
+            file.seek((long) block.blockNumber() * blockSize);
             file.getChannel().write(page.contents());
         } catch (IOException e) {
             throw new RuntimeException("cannot write block " + block);
@@ -52,10 +52,10 @@ public class FileManager {
     public synchronized Block append(String filename) {
         int newblknum = length(filename);
         Block block = new Block(filename, newblknum);
-        byte[] bytes = new byte[blocksize];
+        byte[] bytes = new byte[blockSize];
         try {
             RandomAccessFile file = getFile(block.fileName());
-            file.seek((long) block.blockNumber() * blocksize);
+            file.seek((long) block.blockNumber() * blockSize);
             file.write(bytes);
 
             return block;
@@ -68,7 +68,7 @@ public class FileManager {
     public int length(String filename) {
         try {
             RandomAccessFile file = getFile(filename);
-            return (int) (file.length() / blocksize);
+            return (int) (file.length() / blockSize);
         } catch (IOException e) {
             throw new RuntimeException("cannot access " + filename);
         }
@@ -78,8 +78,8 @@ public class FileManager {
         return isNew;
     }
 
-    public int getBlocksize() {
-        return blocksize;
+    public int getBlockSize() {
+        return blockSize;
     }
 
     private RandomAccessFile getFile(String filename) throws IOException {
