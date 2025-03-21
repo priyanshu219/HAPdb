@@ -54,13 +54,6 @@ public class Schema {
         return infoMap.get(fieldName).length;
     }
 
-    private static class FieldInfo {
-        int type;
-        int length;
-
-        public FieldInfo(int type, int length) {
-            this.type = type;
-            this.length = length;
-        }
+    private record FieldInfo(int type, int length) {
     }
 }
