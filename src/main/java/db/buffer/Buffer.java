@@ -5,8 +5,6 @@ import db.file.FileManager;
 import db.file.Page;
 import db.log.LogManager;
 
-import java.io.IOException;
-
 public class Buffer {
     private final FileManager fileManager;
     private final LogManager logManager;
@@ -41,6 +39,7 @@ public class Buffer {
         }
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isPinned() {
         return this.pins > 0;
     }
@@ -49,7 +48,7 @@ public class Buffer {
         return this.txnnum;
     }
 
-    void assignToBlock(Block block) throws IOException {
+    void assignToBlock(Block block) {
         flush();
         this.block = block;
         fileManager.read(block, contents);

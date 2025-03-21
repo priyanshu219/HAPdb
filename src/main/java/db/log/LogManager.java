@@ -4,7 +4,6 @@ import db.file.Block;
 import db.file.FileManager;
 import db.file.Page;
 
-import java.io.IOException;
 import java.util.Iterator;
 
 public class LogManager {
@@ -37,7 +36,7 @@ public class LogManager {
         }
     }
 
-    public Iterator<byte[]> iterator() throws IOException {
+    public Iterator<byte[]> iterator() {
         flush();
         return new LogIterator(fileManager, currentBlock);
     }

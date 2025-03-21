@@ -4,7 +4,6 @@ import db.file.Block;
 import db.file.FileManager;
 import db.file.Page;
 
-import java.io.IOException;
 import java.util.Iterator;
 
 class LogIterator implements Iterator<byte[]> {

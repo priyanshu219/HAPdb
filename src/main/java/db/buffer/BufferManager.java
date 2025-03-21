@@ -4,7 +4,6 @@ import db.file.Block;
 import db.file.FileManager;
 import db.log.LogManager;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 public class BufferManager {
@@ -38,7 +37,7 @@ public class BufferManager {
         }
     }
 
-    public synchronized Buffer pin(Block block) throws IOException, BufferAbortException {
+    public synchronized Buffer pin(Block block) throws BufferAbortException {
         try {
             long timestamp = System.currentTimeMillis();
             Buffer buffer = tryToPin(block);
@@ -59,7 +58,7 @@ public class BufferManager {
         return (System.currentTimeMillis() - startTime) > MAX_TIME;
     }
 
-    private Buffer tryToPin(Block block) throws IOException {
+    private Buffer tryToPin(Block block) {
         Buffer buffer = findExistingBuffer(block);
         if (null == buffer) {
             buffer = chooseUpinnedBuffer();
