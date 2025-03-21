@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class FileManager {
@@ -22,7 +23,7 @@ public class FileManager {
             dbDirectory.mkdirs();
         }
 
-        for (String filename : dbDirectory.list()) {
+        for (String filename : Objects.requireNonNull(dbDirectory.list())) {
             if (filename.startsWith("temp")) {
                 new File(dbDirectory, filename).delete();
             }
