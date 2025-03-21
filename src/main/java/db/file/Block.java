@@ -4,10 +4,10 @@ public record Block(String fileName, int blockNumber) {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Block block)) {
+        if (!(obj instanceof Block(String name, int number))) {
             return false;
         }
-        return fileName.equals(block.fileName()) && blockNumber == block.blockNumber();
+        return fileName.equals(name) && blockNumber == number;
     }
 
     @Override
