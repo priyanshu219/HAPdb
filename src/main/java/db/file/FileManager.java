@@ -50,9 +50,9 @@ public class FileManager {
         }
     }
 
-    public synchronized Block append(String filename) {
-        int newblknum = length(filename);
-        Block block = new Block(filename, newblknum);
+    public synchronized Block append(String fileName) {
+        int newblknum = length(fileName);
+        Block block = new Block(fileName, newblknum);
         byte[] bytes = new byte[blockSize];
         try {
             RandomAccessFile file = getFile(block.fileName());
