@@ -55,7 +55,7 @@ public class SetIntRecord implements LogRecord{
     public static int writeToLog(LogManager logManager, int txNum, Block block, int offset, int value) {
         int transactionPosition = Integer.BYTES;
         int filePosition = transactionPosition + Integer.BYTES;
-        int blockPosition = filePosition + Page.maxLength(block.getFileName().length());
+        int blockPosition = filePosition + Page.maxLength(block.fileName().length());
         int offsetPosition = blockPosition + Integer.BYTES;
         int valuePosition = offsetPosition + Integer.BYTES;
         int recordLength = valuePosition + Integer.BYTES;
@@ -64,8 +64,8 @@ public class SetIntRecord implements LogRecord{
         Page page = new Page(record);
         page.setInt(0, RecordType.SETINT.ordinal());
         page.setInt(transactionPosition, txNum);
-        page.setString(filePosition, block.getFileName());
-        page.setInt(blockPosition, block.getBlockNumber());
+        page.setString(filePosition, block.fileName());
+        page.setInt(blockPosition, block.blockNumber());
         page.setInt(offsetPosition, offset);
         page.setInt(valuePosition, value);
 

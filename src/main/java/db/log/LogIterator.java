@@ -13,7 +13,7 @@ class LogIterator implements Iterator<byte[]> {
     private final Page page;
     private int currentPosition;
 
-    public LogIterator(FileManager fileManager, Block block) throws IOException {
+    public LogIterator(FileManager fileManager, Block block) {
         this.fileManager = fileManager;
         this.block = block;
         byte[] bytes = new byte[fileManager.getBlocksize()];
@@ -23,25 +23,21 @@ class LogIterator implements Iterator<byte[]> {
 
     @Override
     public boolean hasNext() {
-        return (currentPosition < fileManager.getBlocksize()) || (block.getBlockNumber() > 0);
+        return (currentPosition < fileManager.getBlocksize()) || (block.blockNumber() > 0);
     }
 
     @Override
     public byte[] next() {
         if (currentPosition == fileManager.getBlocksize()) {
-            block = new Block(block.getFileName(), block.getBlockNumber() - 1);
-            try {
-                moveToBlock(block);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            block = new Block(block.fileName(), block.blockNumber() - 1);
+            moveToBlock(block);
         }
         byte[] record = page.getBytes(currentPosition);
         currentPosition += (Integer.BYTES + record.length);
         return record;
     }
 
-    private void moveToBlock(Block block) throws IOException {
+    private void moveToBlock(Block block) {
         fileManager.read(block, page);
         currentPosition = page.getInt(0);
     }

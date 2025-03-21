@@ -9,7 +9,7 @@ public class TableScan {
     private final Transaction transaction;
     private final Layout layout;
     private RecordPage page;
-    private String fileName;
+    private final String fileName;
     private int currentSlot;
 
     public TableScan(Transaction transaction, String tableName, Layout layout) throws IOException {
@@ -44,7 +44,7 @@ public class TableScan {
             if (atLastBlock()) {
                 return false;
             }
-            moveToBlock(page.getBlock().getBlockNumber() + 1);
+            moveToBlock(page.getBlock().blockNumber() + 1);
             currentSlot = page.nextAfter(currentSlot);
         }
         return true;
@@ -52,9 +52,9 @@ public class TableScan {
 
     public void moveToRID(RID rid) throws IOException {
         close();
-        Block block = new Block(fileName, rid.getBlockNum());
+        Block block = new Block(fileName, rid.blockNum());
         page = new RecordPage(transaction, block, layout);
-        currentSlot = rid.getSlot();
+        currentSlot = rid.slot();
     }
 
     public void insert() throws IOException {
@@ -63,7 +63,7 @@ public class TableScan {
             if (atLastBlock()) {
                 moveToNewBlock();
             } else {
-                moveToBlock(page.getBlock().getBlockNumber() + 1);
+                moveToBlock(page.getBlock().blockNumber() + 1);
             }
             currentSlot = page.insertAfter(currentSlot);
         }
@@ -108,6 +108,6 @@ public class TableScan {
     }
 
     private boolean atLastBlock() {
-        return (page.getBlock().getBlockNumber() == transaction.size(fileName) - 1);
+        return (page.getBlock().blockNumber() == transaction.size(fileName) - 1);
     }
 }
