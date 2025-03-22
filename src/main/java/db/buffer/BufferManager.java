@@ -14,7 +14,9 @@ public class BufferManager {
     public BufferManager(FileManager fileManager, LogManager logManager, int totalBuffers) {
         this.bufferPool = new Buffer[totalBuffers];
         this.totalAvailable = totalBuffers;
-        Arrays.fill(bufferPool, new Buffer(fileManager, logManager));
+        for (int i = 0; i < totalBuffers; i++) {
+            bufferPool[i] = new Buffer(fileManager, logManager);
+        }
     }
 
     public synchronized int getTotalAvailable() {
