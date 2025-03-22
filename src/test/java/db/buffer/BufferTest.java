@@ -1,14 +1,21 @@
 package db.buffer;
 
 import db.CleanUtil;
+import db.FileConfig;
+import db.TestConfig;
 import db.file.Block;
 import db.file.Page;
 import db.server.HAPdb;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(FileConfig.class)
+@TestConfig(directoryName = "buffer_test", blockSize = 400, totalBuffers = 3)
 class BufferTest {
-    public static void main(String[] args) {
-        HAPdb db = new HAPdb("buffertest", 400, 3);
-        BufferManager bufferManager = db.getBufferManager();
+
+    @Test
+    public void bufferTest() {
+        BufferManager bufferManager = FileConfig.bufferManager();
 
         Buffer buffer1 = bufferManager.pin(new Block("testfile", 1));
         Page page = buffer1.getContents();
@@ -30,7 +37,5 @@ class BufferTest {
         bufferManager.unpin(buffer);
         Buffer buffer2 = bufferManager.pin(new Block("testfile", 1));
         assert buffer2.getContents().getInt(80) == (intValue + 1);
-
-        CleanUtil.deleteDirectory("buffertest");
     }
 }

@@ -1,11 +1,18 @@
 package db.file;
 
+import db.FileConfig;
+import db.TestConfig;
 import db.server.HAPdb;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(FileConfig.class)
+@TestConfig(directoryName = "file_test", blockSize = 400, totalBuffers = 8)
 class FileManagerTest {
-    public static void main(String[] args) {
-        HAPdb db = new HAPdb("filetest", 400, 8);
-        FileManager fileManager = db.getFileManager();
+
+    @Test
+    public void fileManagerTest() {
+        FileManager fileManager = FileConfig.fileManager();
 
         Block block = new Block("testfile", 2);
         Page page1 = new Page(fileManager.getBlockSize());

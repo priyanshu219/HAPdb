@@ -1,26 +1,27 @@
 package db.log;
 
 import db.CleanUtil;
+import db.FileConfig;
+import db.TestConfig;
 import db.file.Page;
-import db.server.HAPdb;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Iterator;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+@ExtendWith(FileConfig.class)
+@TestConfig(directoryName = "log_test", blockSize = 400, totalBuffers = 8)
 class LogManagerTest {
     private static LogManager logManager;
 
-    public static void main(String[] args) {
-        HAPdb db = new HAPdb("logtest", 400, 8);
-        logManager = db.getLogManager();
+    @Test
+    public void logManagerTest() {
+        logManager = FileConfig.logManager();
         createRecords(1, 35);
         printLogRecords("The log file now has below records");
         createRecords(36, 70);
         logManager.flush(65);
         printLogRecords("The log file now has below records");
-
-        CleanUtil.deleteDirectory("logtest");
     }
 
     private static void printLogRecords(String msg) {
