@@ -9,8 +9,6 @@ import db.log.LogManager;
 import db.transaction.concurrency.ConcurrencyManager;
 import db.transaction.recovery.RecoveryManager;
 
-import java.io.IOException;
-
 public class Transaction {
     private static int nextTxNum = 0;
     private static final int END_OF_FILE = -1;
@@ -37,19 +35,19 @@ public class Transaction {
         System.out.println("transaction " + txNum + " committed");
     }
 
-    public void rollback() throws IOException {
+    public void rollback() {
         recoveryManager.rollback();
         concurrencyManager.release();
         myBuffers.unpinAll();
         System.out.println("transaction " + txNum + " rolled back");
     }
 
-    public void recover() throws IOException {
+    public void recover() {
         bufferManager.flushAll(txNum);
         recoveryManager.recover();
     }
 
-    public void pin(Block block) throws IOException {
+    public void pin(Block block) {
         myBuffers.pin(block);
     }
 

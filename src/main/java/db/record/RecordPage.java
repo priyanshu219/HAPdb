@@ -3,7 +3,6 @@ package db.record;
 import db.file.Block;
 import db.transaction.Transaction;
 
-import java.io.IOException;
 import static java.sql.Types.INTEGER;
 
 
@@ -20,7 +19,7 @@ public class RecordPage {
     private final Block block;
     private final Layout layout;
 
-    public RecordPage(Transaction transaction, Block block, Layout layout) throws IOException {
+    public RecordPage(Transaction transaction, Block block, Layout layout) {
         this.transaction = transaction;
         this.block = block;
         this.layout = layout;

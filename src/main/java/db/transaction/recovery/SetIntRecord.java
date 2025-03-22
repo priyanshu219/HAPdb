@@ -5,8 +5,6 @@ import db.file.Page;
 import db.log.LogManager;
 import db.transaction.Transaction;
 
-import java.io.IOException;
-
 public class SetIntRecord implements LogRecord{
     private final int txNum;
     private final int offset;
@@ -42,7 +40,7 @@ public class SetIntRecord implements LogRecord{
     }
 
     @Override
-    public void undo(Transaction transaction) throws IOException {
+    public void undo(Transaction transaction) {
         transaction.pin(block);
         transaction.setInt(block, offset, value, false);
         transaction.unpin(block);

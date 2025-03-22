@@ -4,7 +4,6 @@ import db.buffer.Buffer;
 import db.buffer.BufferManager;
 import db.file.Block;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +25,7 @@ public class BufferList {
         return buffers.get(block);
     }
 
-    void pin(Block block) throws IOException {
+    void pin(Block block) {
         Buffer buffer = bufferManager.pin(block);
         buffers.put(block, buffer);
         pins.add(block);

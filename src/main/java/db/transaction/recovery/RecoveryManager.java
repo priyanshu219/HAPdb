@@ -7,7 +7,6 @@ import db.log.LogManager;
 import db.transaction.Transaction;
 import db.transaction.recovery.LogRecord.RecordType;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -32,14 +31,14 @@ public class RecoveryManager {
         logManager.flush(LSN);
     }
 
-    public void rollback() throws IOException {
+    public void rollback() {
         doRollback();
         bufferManager.flushAll(txNum);
         int LSN = RollbackRecord.writeToLog(logManager, txNum);
         logManager.flush(LSN);
     }
 
-    public void recover() throws IOException {
+    public void recover() {
         doRecover();
         bufferManager.flushAll(txNum);
         int LSN = CheckpointRecord.writeToLog(logManager);
@@ -58,7 +57,7 @@ public class RecoveryManager {
         return SetStringRecord.writeToLog(logManager, txNum, block, offset, oldValue);
     }
 
-    private void doRollback() throws IOException {
+    private void doRollback() {
         Iterator<byte[]> iterator = logManager.iterator();
         while (iterator.hasNext()) {
             byte[] bytes = iterator.next();
@@ -72,7 +71,7 @@ public class RecoveryManager {
         }
     }
 
-    private void doRecover() throws IOException {
+    private void doRecover() {
         Collection<Integer> finishedTxs = new ArrayList<>();
         Iterator<byte[]> iterator = logManager.iterator();
 

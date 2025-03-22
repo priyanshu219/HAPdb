@@ -3,7 +3,6 @@ package db.transaction.recovery;
 import db.file.Page;
 import db.transaction.Transaction;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -23,7 +22,7 @@ public interface LogRecord {
     /**
      * Logging only old value due to undo only recovery
      */
-    void undo(Transaction transaction) throws IOException;
+    void undo(Transaction transaction);
 
     Map<Integer, Function<Page, LogRecord>> RECORD_FACTORIES = Map.of(RecordType.CHECKPOINT.ordinal(), CheckpointRecord::new,
             RecordType.START.ordinal(), StartRecord::new,

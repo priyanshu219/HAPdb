@@ -3,8 +3,6 @@ package db.record;
 import db.file.Block;
 import db.transaction.Transaction;
 
-import java.io.IOException;
-
 public class TableScan {
     private final Transaction transaction;
     private final Layout layout;
@@ -12,7 +10,7 @@ public class TableScan {
     private final String fileName;
     private int currentSlot;
 
-    public TableScan(Transaction transaction, String tableName, Layout layout) throws IOException {
+    public TableScan(Transaction transaction, String tableName, Layout layout) {
         this.transaction = transaction;
         this.layout = layout;
         this.fileName = tableName + ".tbl";
@@ -34,11 +32,11 @@ public class TableScan {
     /**
      * methods that establish the current record
      */
-    public void beforeFirst() throws IOException {
+    public void beforeFirst() {
         moveToBlock(0);
     }
 
-    public boolean next() throws IOException {
+    public boolean next() {
         currentSlot = page.nextAfter(currentSlot);
         while (currentSlot < 0) {
             if (atLastBlock()) {
@@ -50,14 +48,14 @@ public class TableScan {
         return true;
     }
 
-    public void moveToRID(RID rid) throws IOException {
+    public void moveToRID(RID rid) {
         close();
         Block block = new Block(fileName, rid.blockNum());
         page = new RecordPage(transaction, block, layout);
         currentSlot = rid.slot();
     }
 
-    public void insert() throws IOException {
+    public void insert() {
         currentSlot = page.insertAfter(currentSlot);
         while (currentSlot < 0) {
             if (atLastBlock()) {
@@ -92,7 +90,7 @@ public class TableScan {
         page.delete(currentSlot);
     }
 
-    private void moveToNewBlock() throws IOException {
+    private void moveToNewBlock() {
         close();
         Block block = transaction.append(fileName);
         page = new RecordPage(transaction, block, layout);
@@ -100,7 +98,7 @@ public class TableScan {
         currentSlot = -1;
     }
 
-    private void moveToBlock(int blockNumber) throws IOException {
+    private void moveToBlock(int blockNumber) {
         close();
         Block block = new Block(fileName, blockNumber);
         page = new RecordPage(transaction, block, layout);
