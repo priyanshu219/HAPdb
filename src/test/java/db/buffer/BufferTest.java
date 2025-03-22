@@ -1,11 +1,9 @@
 package db.buffer;
 
-import db.CleanUtil;
 import db.FileConfig;
 import db.TestConfig;
 import db.file.Block;
 import db.file.Page;
-import db.server.HAPdb;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 

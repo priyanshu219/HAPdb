@@ -2,7 +2,6 @@ package db.file;
 
 import db.FileConfig;
 import db.TestConfig;
-import db.server.HAPdb;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 

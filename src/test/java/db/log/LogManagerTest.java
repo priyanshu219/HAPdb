@@ -1,6 +1,5 @@
 package db.log;
 
-import db.CleanUtil;
 import db.FileConfig;
 import db.TestConfig;
 import db.file.Page;
