@@ -1,5 +1,6 @@
 package db.buffer;
 
+import db.CleanUtil;
 import db.file.Block;
 import db.file.Page;
 import db.server.HAPdb;
@@ -29,5 +30,7 @@ class BufferTest {
         bufferManager.unpin(buffer);
         Buffer buffer2 = bufferManager.pin(new Block("testfile", 1));
         assert buffer2.getContents().getInt(80) == (intValue + 1);
+
+        CleanUtil.deleteDirectory("buffertest");
     }
 }
