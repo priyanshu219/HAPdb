@@ -4,6 +4,7 @@ import db.buffer.BufferManager;
 import db.file.FileManager;
 import db.log.LogManager;
 import db.server.HAPdb;
+import db.transaction.Transaction;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -29,6 +30,10 @@ public class FileConfig implements BeforeAllCallback, AfterAllCallback {
 
     public static BufferManager bufferManager() {
         return db.getBufferManager();
+    }
+
+    public static Transaction newTransaction() {
+        return new Transaction(fileManager(), logManager(), bufferManager());
     }
 
     @Override
