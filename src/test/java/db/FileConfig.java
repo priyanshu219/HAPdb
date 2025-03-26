@@ -10,7 +10,6 @@ import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.io.File;
-import java.io.IOException;
 
 public class FileConfig implements BeforeAllCallback, AfterAllCallback {
     private static HAPdb db;
@@ -49,7 +48,7 @@ public class FileConfig implements BeforeAllCallback, AfterAllCallback {
 
     @Override
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public void afterAll(ExtensionContext extensionContext) throws IOException {
+    public void afterAll(ExtensionContext extensionContext) {
         File directory = new File(directoryName);
         for (String fileName : directory.list()) {
             new File(directory, fileName).delete();
