@@ -1,9 +1,13 @@
 package db.record;
 
 import db.file.Block;
+import db.query.Constant;
+import db.query.UpdateScan;
 import db.transaction.Transaction;
 
-public class TableScan {
+import static java.sql.Types.INTEGER;
+
+public class TableScan implements UpdateScan {
     private final Transaction transaction;
     private final Layout layout;
     private RecordPage page;
@@ -21,6 +25,7 @@ public class TableScan {
         }
     }
 
+    @Override
     public void close() {
         if (null != page) {
             transaction.unpin(page.getBlock());
@@ -32,10 +37,12 @@ public class TableScan {
     /**
      * methods that establish the current record
      */
+    @Override
     public void beforeFirst() {
         moveToBlock(0);
     }
 
+    @Override
     public boolean next() {
         currentSlot = page.nextAfter(currentSlot);
         while (currentSlot < 0) {
@@ -48,6 +55,7 @@ public class TableScan {
         return true;
     }
 
+    @Override
     public void moveToRID(RID rid) {
         close();
         Block block = new Block(fileName, rid.blockNum());
@@ -55,6 +63,12 @@ public class TableScan {
         currentSlot = rid.slot();
     }
 
+    @Override
+    public RID getRID() {
+        return new RID(page.getBlock().blockNumber(), currentSlot);
+    }
+
+    @Override
     public void insert() {
         currentSlot = page.insertAfter(currentSlot);
         while (currentSlot < 0) {
@@ -70,22 +84,50 @@ public class TableScan {
     /**
      * Methods that access the current record
      */
+    @Override
     public int getInt(String fieldName) {
         return page.getInt(currentSlot, fieldName);
     }
 
+    @Override
     public String getString(String fieldName) {
         return page.getString(currentSlot, fieldName);
     }
 
+    @Override
+    public Constant getValue(String fieldName) {
+        if (layout.getSchema().getFieldType(fieldName) == INTEGER) {
+            return new Constant(getInt(fieldName));
+        } else {
+            return new Constant(getString(fieldName));
+        }
+    }
+
+    @Override
+    public boolean hasField(String fieldName) {
+        return layout.getSchema().hasField(fieldName);
+    }
+
+    @Override
     public void setInt(String fieldName, int value) {
         page.setInt(currentSlot, fieldName, value);
     }
 
+    @Override
     public void setString(String fieldName, String value) {
         page.setString(currentSlot, fieldName, value);
     }
 
+    @Override
+    public void setValue(String fieldName, Constant value) {
+        if (layout.getSchema().getFieldType(fieldName) == INTEGER) {
+            page.setInt(currentSlot, fieldName, value.asInt());
+        } else {
+            page.setString(currentSlot, fieldName, value.asString());
+        }
+    }
+
+    @Override
     public void delete() {
         page.delete(currentSlot);
     }

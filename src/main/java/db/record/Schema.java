@@ -54,6 +54,10 @@ public class Schema {
         return infoMap.get(fieldName).length;
     }
 
+    public boolean hasField(String fieldName) {
+        return (null != infoMap.get(fieldName));
+    }
+
     private record FieldInfo(int type, int length) {
     }
 }
