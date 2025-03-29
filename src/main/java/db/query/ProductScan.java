@@ -1,6 +1,6 @@
 package db.query;
 
-public class ProductScan implements Scan{
+public class ProductScan implements Scan {
     private final Scan lhsScan, rhsScan;
 
     public ProductScan(Scan lhsScan, Scan rhsScan) {

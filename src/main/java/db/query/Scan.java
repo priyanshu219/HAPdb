@@ -1,14 +1,17 @@
 package db.query;
 
 public interface Scan {
-    public void beforeFirst();
-    public boolean next();
+    void beforeFirst();
 
-    public int getInt(String fieldName);
-    public String getString(String fieldName);
-    public Constant getValue(String fieldName);
+    boolean next();
 
-    public boolean hasField(String fieldName);
+    int getInt(String fieldName);
 
-    public void close();
+    String getString(String fieldName);
+
+    Constant getValue(String fieldName);
+
+    boolean hasField(String fieldName);
+
+    void close();
 }

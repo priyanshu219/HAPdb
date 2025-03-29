@@ -1,6 +1,6 @@
 package db.query;
 
-public class Constant implements Comparable<Constant>{
+public class Constant implements Comparable<Constant> {
     private final Integer intValue;
     private final String stringValue;
 
@@ -39,7 +39,7 @@ public class Constant implements Comparable<Constant>{
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return (null != intValue) ? (intValue.toString()) : (stringValue.toString());
     }
 }

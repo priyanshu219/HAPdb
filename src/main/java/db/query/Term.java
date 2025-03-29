@@ -4,6 +4,7 @@ import db.record.Schema;
 
 public class Term {
     private final Expression lhs, rhs;
+
     public Term(Expression lhs, Expression rhs) {
         this.lhs = lhs;
         this.rhs = rhs;
