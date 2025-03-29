@@ -1,5 +1,8 @@
 package db.query;
 
+import org.jetbrains.annotations.NotNull;
+
+@SuppressWarnings("ConstantConditions")
 public class Constant implements Comparable<Constant> {
     private final Integer intValue;
     private final String stringValue;
@@ -24,12 +27,15 @@ public class Constant implements Comparable<Constant> {
 
     @Override
     public boolean equals(Object obj) {
+        if (obj instanceof Constant) {
+            return false;
+        }
         Constant constant = (Constant) obj;
         return (null != intValue) ? (intValue.equals(constant.intValue)) : (stringValue.equals(constant.stringValue));
     }
 
     @Override
-    public int compareTo(Constant constant) {
+    public int compareTo(@NotNull Constant constant) {
         return (null != intValue) ? (intValue.compareTo(constant.intValue)) : (stringValue.compareTo(constant.stringValue));
     }
 
@@ -40,6 +46,6 @@ public class Constant implements Comparable<Constant> {
 
     @Override
     public String toString() {
-        return (null != intValue) ? (intValue.toString()) : (stringValue.toString());
+        return (null != intValue) ? (intValue.toString()) : (stringValue);
     }
 }
