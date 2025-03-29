@@ -19,11 +19,11 @@ public class ViewManager {
         }
     }
 
-    public void createView(String vName, String vDef, Transaction transaction) {
+    public void createView(String viewName, String viewDef, Transaction transaction) {
         Layout layout = tableManager.getlayout("viewcat", transaction);
         TableScan tableScan = new TableScan(transaction, "viewcat", layout);
-        tableScan.setString("viewname", vName);
-        tableScan.setString("viewdef", vDef);
+        tableScan.setString("viewname", viewName);
+        tableScan.setString("viewdef", viewDef);
         tableScan.close();
     }
 
