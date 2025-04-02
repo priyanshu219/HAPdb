@@ -41,7 +41,7 @@ class RecordPageTest {
         assert recordPage.insertAfter(-1) == -1;
 
         slot = recordPage.nextAfter(-1);
-        while(slot >= 0) {
+        while (slot >= 0) {
             int fieldAValue = recordPage.getInt(slot, "FieldA");
             if (fieldAValue <= 20) {
                 recordPage.delete(slot);

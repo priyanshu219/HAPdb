@@ -5,7 +5,7 @@ import db.file.Page;
 import db.log.LogManager;
 import db.transaction.Transaction;
 
-public class SetIntRecord implements LogRecord{
+public class SetIntRecord implements LogRecord {
     private final int txNum;
     private final int offset;
     private final int value;
@@ -48,6 +48,7 @@ public class SetIntRecord implements LogRecord{
 
     /**
      * Logging only old value due to undo only recovery
+     *
      * @return it return LSN
      */
     public static int writeToLog(LogManager logManager, int txNum, Block block, int offset, int value) {

@@ -33,7 +33,6 @@ public class TableScan implements UpdateScan {
     }
 
 
-
     /**
      * methods that establish the current record
      */

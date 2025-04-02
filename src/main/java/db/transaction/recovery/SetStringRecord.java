@@ -5,7 +5,7 @@ import db.file.Page;
 import db.log.LogManager;
 import db.transaction.Transaction;
 
-public class SetStringRecord implements LogRecord{
+public class SetStringRecord implements LogRecord {
     private final int txNum;
     private final int offset;
     private final String value;

@@ -13,7 +13,7 @@ public class LockTable {
         this.locks = new HashMap<>();
     }
 
-    public synchronized void sLock(Block block) throws LockAbortException{
+    public synchronized void sLock(Block block) throws LockAbortException {
         try {
             long timestamp = System.currentTimeMillis();
             while (hasXLock(block) && !waitingTooLong(timestamp)) {
@@ -29,7 +29,7 @@ public class LockTable {
         }
     }
 
-    public synchronized void xLock(Block block) throws LockAbortException{
+    public synchronized void xLock(Block block) throws LockAbortException {
         try {
             long timestamp = System.currentTimeMillis();
             while (hasOtherSLocks(block) && !waitingTooLong(timestamp)) {

@@ -17,6 +17,7 @@ public interface LogRecord {
     }
 
     RecordType getRecordType();
+
     int getTxNumber();
 
     /**

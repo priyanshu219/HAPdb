@@ -38,7 +38,7 @@ public class StatManager {
         TableScan tableScan = new TableScan(transaction, "tblcat", tcatLayout);
         while (tableScan.next()) {
             String tblName = tableScan.getString("tblname");
-            Layout layout  = tableManager.getlayout(tblName, transaction);
+            Layout layout = tableManager.getlayout(tblName, transaction);
             StatInfo statInfo = calcTableStats(tblName, layout, transaction);
             tableStats.put(tblName, statInfo);
         }
