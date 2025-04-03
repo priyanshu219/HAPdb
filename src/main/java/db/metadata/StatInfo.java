@@ -1,7 +1,7 @@
 package db.metadata;
 
-public record StatInfo(int numBlocks, int numRecords) {
+public record StatInfo(int blocksAccessed, int recordsOutput) {
     public int getDistinctValues(String fieldName) {
-        return 1 + (numRecords / 3);
+        return 1 + (recordsOutput / 3);
     }
 }
