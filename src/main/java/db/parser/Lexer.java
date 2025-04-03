@@ -6,8 +6,8 @@ import java.io.StringReader;
 import java.util.Set;
 
 public class Lexer {
-    private Set<String> keywords;
     private final StreamTokenizer token;
+    private Set<String> keywords;
 
     public Lexer(String str) {
         initKeywords();

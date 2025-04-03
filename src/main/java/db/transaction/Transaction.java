@@ -10,8 +10,8 @@ import db.transaction.concurrency.ConcurrencyManager;
 import db.transaction.recovery.RecoveryManager;
 
 public class Transaction {
-    private static int nextTxNum = 0;
     private static final int END_OF_FILE = -1;
+    private static int nextTxNum = 0;
     private final FileManager fileManager;
     private final RecoveryManager recoveryManager;
     private final BufferManager bufferManager;
@@ -26,6 +26,12 @@ public class Transaction {
         this.recoveryManager = new RecoveryManager(logManager, bufferManager, this, txNum);
         this.concurrencyManager = new ConcurrencyManager();
         myBuffers = new BufferList(bufferManager);
+    }
+
+    private static synchronized int nextTxNumber() {
+        nextTxNum++;
+        System.out.println("new transaction: " + nextTxNum);
+        return nextTxNum;
     }
 
     public void commit() {
@@ -109,11 +115,5 @@ public class Transaction {
 
     public int availableBuffers() {
         return bufferManager.getTotalAvailable();
-    }
-
-    private static synchronized int nextTxNumber() {
-        nextTxNum++;
-        System.out.println("new transaction: " + nextTxNum);
-        return nextTxNum;
     }
 }

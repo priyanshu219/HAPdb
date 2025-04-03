@@ -8,8 +8,8 @@ import java.util.Iterator;
 
 class LogIterator implements Iterator<byte[]> {
     private final FileManager fileManager;
-    private Block block;
     private final Page page;
+    private Block block;
     private int currentPosition;
 
     public LogIterator(FileManager fileManager, Block block) {

@@ -12,6 +12,18 @@ public class StartRecord implements LogRecord {
         this.txNum = page.getInt(transactionPosition);
     }
 
+    public static void writeToLog(LogManager logManager, int txNum) {
+        int transactionPosition = Integer.BYTES;
+        int recordLen = transactionPosition + Integer.BYTES;
+
+        byte[] record = new byte[recordLen];
+        Page page = new Page(record);
+        page.setInt(0, RecordType.START.ordinal());
+        page.setInt(transactionPosition, txNum);
+
+        logManager.append(record);
+    }
+
     @Override
     public RecordType getRecordType() {
         return RecordType.START;
@@ -24,17 +36,5 @@ public class StartRecord implements LogRecord {
 
     @Override
     public void undo(Transaction transaction) {
-    }
-
-    public static void writeToLog(LogManager logManager, int txNum) {
-        int transactionPosition = Integer.BYTES;
-        int recordLen = transactionPosition + Integer.BYTES;
-
-        byte[] record = new byte[recordLen];
-        Page page = new Page(record);
-        page.setInt(0, RecordType.START.ordinal());
-        page.setInt(transactionPosition, txNum);
-
-        logManager.append(record);
     }
 }

@@ -2,8 +2,8 @@ package db.transaction.concurrency;
 
 import db.file.Block;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 public class LockTable {
     private static final long MAX_TIME = 10000;

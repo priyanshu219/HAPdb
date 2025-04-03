@@ -7,10 +7,10 @@ import db.log.LogManager;
 import java.io.File;
 
 public class HAPdb {
+    public static final String LOG_FILE = "hapdb.log";
     private final FileManager fileManager;
     private final LogManager logManager;
     private final BufferManager bufferManager;
-    public static final String LOG_FILE = "hapdb.log";
 
     public HAPdb(String directoryName, int blockSize, int totalBuffers) {
         File dbDirectory = new File(directoryName);

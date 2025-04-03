@@ -10,11 +10,6 @@ import static java.sql.Types.INTEGER;
  * Implementing fixed-size non-spanned homogeneous slotted page
  */
 public class RecordPage {
-    enum Flag {
-        USED,
-        EMPTY
-    }
-
     private final Transaction transaction;
     private final Block block;
     private final Layout layout;
@@ -104,5 +99,10 @@ public class RecordPage {
 
     private int offset(int slot) {
         return slot * layout.getSlotSize();
+    }
+
+    enum Flag {
+        USED,
+        EMPTY
     }
 }

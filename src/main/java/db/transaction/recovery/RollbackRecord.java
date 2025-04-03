@@ -12,6 +12,18 @@ public class RollbackRecord implements LogRecord {
         this.txNum = page.getInt(transactionPosition);
     }
 
+    public static int writeToLog(LogManager logManager, int txNum) {
+        int transactionPosition = Integer.BYTES;
+        int recordLen = transactionPosition + Integer.BYTES;
+
+        byte[] record = new byte[recordLen];
+        Page page = new Page(record);
+        page.setInt(0, RecordType.COMMIT.ordinal());
+        page.setInt(transactionPosition, txNum);
+
+        return logManager.append(record);
+    }
+
     @Override
     public RecordType getRecordType() {
         return RecordType.ROLLBACK;
@@ -24,17 +36,5 @@ public class RollbackRecord implements LogRecord {
 
     @Override
     public void undo(Transaction transaction) {
-    }
-
-    public static int writeToLog(LogManager logManager, int txNum) {
-        int transactionPosition = Integer.BYTES;
-        int recordLen = transactionPosition + Integer.BYTES;
-
-        byte[] record = new byte[recordLen];
-        Page page = new Page(record);
-        page.setInt(0, RecordType.COMMIT.ordinal());
-        page.setInt(transactionPosition, txNum);
-
-        return logManager.append(record);
     }
 }

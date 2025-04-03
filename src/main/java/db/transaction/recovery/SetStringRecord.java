@@ -29,23 +29,6 @@ public class SetStringRecord implements LogRecord {
         value = page.getString(valuePosition);
     }
 
-    @Override
-    public RecordType getRecordType() {
-        return RecordType.SETSTRING;
-    }
-
-    @Override
-    public int getTxNumber() {
-        return this.txNum;
-    }
-
-    @Override
-    public void undo(Transaction transaction) {
-        transaction.pin(block);
-        transaction.setString(block, offset, value, false);
-        transaction.unpin(block);
-    }
-
     /**
      * Logging only old value due to undo only recovery
      */
@@ -67,5 +50,22 @@ public class SetStringRecord implements LogRecord {
         page.setString(valuePosition, value);
 
         return logManager.append(record);
+    }
+
+    @Override
+    public RecordType getRecordType() {
+        return RecordType.SETSTRING;
+    }
+
+    @Override
+    public int getTxNumber() {
+        return this.txNum;
+    }
+
+    @Override
+    public void undo(Transaction transaction) {
+        transaction.pin(block);
+        transaction.setString(block, offset, value, false);
+        transaction.unpin(block);
     }
 }

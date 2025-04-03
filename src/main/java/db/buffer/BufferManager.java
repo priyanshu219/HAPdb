@@ -5,10 +5,10 @@ import db.file.FileManager;
 import db.log.LogManager;
 
 public class BufferManager {
+    private static final long MAX_TIME = 10000;
     // TODO: add HashMap for <Block, Buffer>
     private final Buffer[] bufferPool;
     private int totalAvailable;
-    private static final long MAX_TIME = 10000;
 
     public BufferManager(FileManager fileManager, LogManager logManager, int totalBuffers) {
         this.bufferPool = new Buffer[totalBuffers];

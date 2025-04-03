@@ -10,8 +10,8 @@ import static java.sql.Types.INTEGER;
 public class TableScan implements UpdateScan {
     private final Transaction transaction;
     private final Layout layout;
-    private RecordPage page;
     private final String fileName;
+    private RecordPage page;
     private int currentSlot;
 
     public TableScan(Transaction transaction, String tableName, Layout layout) {
