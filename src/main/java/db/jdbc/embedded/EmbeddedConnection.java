@@ -5,7 +5,6 @@ import db.planner.Planner;
 import db.server.HAPdb;
 import db.transaction.Transaction;
 
-import java.sql.SQLException;
 import java.sql.Statement;
 
 public class EmbeddedConnection extends ConnectionAdapter {
@@ -20,24 +19,24 @@ public class EmbeddedConnection extends ConnectionAdapter {
     }
 
     @Override
-    public Statement createStatement() throws SQLException {
+    public Statement createStatement() {
         return new EmbeddedStatement(this, planner);
     }
 
     @Override
-    public void close() throws SQLException {
+    public void close() {
         commit();
     }
 
     @Override
-    public void commit() throws SQLException {
+    public void commit() {
         transaction.commit();
         transaction = db.getNewTransaction();
     }
 
     @Override
-    public void rollback() throws SQLException {
-        transaction.commit();
+    public void rollback() {
+        transaction.rollback();
         transaction = db.getNewTransaction();
     }
 

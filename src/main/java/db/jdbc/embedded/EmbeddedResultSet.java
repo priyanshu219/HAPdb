@@ -52,12 +52,12 @@ public class EmbeddedResultSet extends ResultSetAdapter {
     }
 
     @Override
-    public ResultSetMetaData getMetaData() throws SQLException {
+    public ResultSetMetaData getMetaData() {
         return new EmbeddedMetaData(schema);
     }
 
     @Override
-    public void close() throws SQLException {
+    public void close() {
         scan.close();
         connection.commit();
     }

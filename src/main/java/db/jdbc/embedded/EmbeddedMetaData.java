@@ -3,8 +3,6 @@ package db.jdbc.embedded;
 import db.jdbc.ResultSetMetaDataAdapter;
 import db.record.Schema;
 
-import java.sql.SQLException;
-
 import static java.sql.Types.INTEGER;
 
 public class EmbeddedMetaData extends ResultSetMetaDataAdapter {
@@ -15,23 +13,23 @@ public class EmbeddedMetaData extends ResultSetMetaDataAdapter {
     }
 
     @Override
-    public int getColumnCount() throws SQLException {
+    public int getColumnCount() {
         return schema.getFields().size();
     }
 
     @Override
-    public String getColumnName(int column) throws SQLException {
+    public String getColumnName(int column) {
         return schema.getFields().get(column - 1);
     }
 
     @Override
-    public int getColumnType(int column) throws SQLException {
+    public int getColumnType(int column) {
         String fieldName = getColumnName(column);
         return schema.getFieldType(fieldName);
     }
 
     @Override
-    public int getColumnDisplaySize(int column) throws SQLException {
+    public int getColumnDisplaySize(int column) {
         String fieldName = getColumnName(column);
         int fieldType = schema.getFieldType(fieldName);
         int fieldLength = (fieldType == INTEGER) ? 6 : schema.getFieldLength(fieldName);
