@@ -46,6 +46,6 @@ public class SelectPlan implements Plan {
 
     @Override
     public Schema schema() {
-        return null;
+        return plan.schema();
     }
 }
