@@ -12,12 +12,19 @@ public class FileManager {
     private final File dbDirectory;
     private final int blockSize;
     private final boolean isNew;
-    private final Map<String, RandomAccessFile> openFiles = new HashMap<>();
+    private final Map<String, RandomAccessFile> openFiles;
+
+    private int blockWritten;
+    private int blockRead;
 
     public FileManager(File dbDirectory, int blockSize) {
         this.dbDirectory = dbDirectory;
         this.blockSize = blockSize;
+        this.openFiles = new HashMap<>();
+
         isNew = !dbDirectory.exists();
+        blockWritten = 0;
+        blockRead = 0;
 
         if (isNew) {
             dbDirectory.mkdirs();
@@ -35,6 +42,8 @@ public class FileManager {
             RandomAccessFile file = getFile(block.fileName());
             file.seek((long) block.blockNumber() * blockSize);
             file.getChannel().read(page.contents());
+
+            blockRead++;
         } catch (IOException e) {
             throw new RuntimeException("cannot read block " + block);
         }
@@ -45,6 +54,8 @@ public class FileManager {
             RandomAccessFile file = getFile(block.fileName());
             file.seek((long) block.blockNumber() * blockSize);
             file.getChannel().write(page.contents());
+
+            blockWritten++;
         } catch (IOException e) {
             throw new RuntimeException("cannot write block " + block);
         }
@@ -81,6 +92,10 @@ public class FileManager {
 
     public int getBlockSize() {
         return blockSize;
+    }
+
+    public FileStatistics fileStatistics() {
+        return new FileStatistics(blockWritten, blockRead);
     }
 
     private RandomAccessFile getFile(String filename) throws IOException {
