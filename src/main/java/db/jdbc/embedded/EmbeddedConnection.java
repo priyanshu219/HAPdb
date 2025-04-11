@@ -32,12 +32,16 @@ public class EmbeddedConnection extends ConnectionAdapter {
     public void commit() {
         transaction.commit();
         transaction = db.getNewTransaction();
+
+        System.out.println(db.getFileManager().fileStatistics().toString());
     }
 
     @Override
     public void rollback() {
         transaction.rollback();
         transaction = db.getNewTransaction();
+
+        System.out.println(db.getFileManager().fileStatistics().toString());
     }
 
     Transaction getTransaction() {
