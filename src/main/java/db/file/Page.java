@@ -8,10 +8,12 @@ public class Page {
     public static final Charset CHARSET = StandardCharsets.US_ASCII;
     private final ByteBuffer byteBuffer;
 
+    //For creating block data storage
     public Page(int blockSize) {
         this.byteBuffer = ByteBuffer.allocateDirect(blockSize);
     }
 
+    //For creating record pages
     public Page(byte[] bytes) {
         byteBuffer = ByteBuffer.wrap(bytes);
     }
@@ -26,6 +28,9 @@ public class Page {
     }
 
     public void setInt(int offset, int n) {
+        if (offset + Integer.BYTES > byteBuffer.capacity()) {
+            throw new PageFormatException("Attempt to write beyond page boundary");
+        }
         byteBuffer.putInt(offset, n);
     }
 
@@ -38,6 +43,9 @@ public class Page {
     }
 
     public void setBytes(int offset, byte[] bytes) {
+        if (offset + Integer.BYTES + bytes.length > byteBuffer.capacity()) {
+            throw new PageFormatException("Attempt to write beyond page boundary");
+        }
         byteBuffer.position(offset);
         byteBuffer.putInt(bytes.length);
         byteBuffer.put(bytes);
