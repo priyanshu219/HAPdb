@@ -4,7 +4,7 @@ import java.sql.*;
 
 public class StatementAdapter implements Statement {
     @Override
-    public ResultSet executeQuery(String sql) throws SQLException{
+    public ResultSet executeQuery(String sql) throws SQLException {
         return null;
     }
 

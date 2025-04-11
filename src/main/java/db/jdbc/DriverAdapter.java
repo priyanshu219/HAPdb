@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 public abstract class DriverAdapter implements Driver {
     @Override
-    public Connection connect(String url, Properties info)  {
+    public Connection connect(String url, Properties info) {
         return null;
     }
 

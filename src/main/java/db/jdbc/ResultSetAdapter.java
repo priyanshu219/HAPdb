@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class ResultSetAdapter implements ResultSet {
     @Override
-    public boolean next() throws SQLException{
+    public boolean next() throws SQLException {
         return false;
     }
 
@@ -105,7 +105,7 @@ public class ResultSetAdapter implements ResultSet {
     }
 
     @Override
-    public String getString(String columnLabel) throws SQLException{
+    public String getString(String columnLabel) throws SQLException {
         return "";
     }
 
@@ -125,7 +125,7 @@ public class ResultSetAdapter implements ResultSet {
     }
 
     @Override
-    public int getInt(String columnLabel) throws SQLException{
+    public int getInt(String columnLabel) throws SQLException {
         return 0;
     }
 

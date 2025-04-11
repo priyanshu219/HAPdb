@@ -7,7 +7,7 @@ import java.util.concurrent.Executor;
 
 public class ConnectionAdapter implements Connection {
     @Override
-    public Statement createStatement(){
+    public Statement createStatement() {
         return null;
     }
 
