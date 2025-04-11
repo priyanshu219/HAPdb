@@ -4,10 +4,14 @@ import db.file.Block;
 import db.file.FileManager;
 import db.log.LogManager;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class BufferManager {
     private static final long MAX_TIME = 10000;
-    // TODO: add HashMap for <Block, Buffer>
     private final Buffer[] bufferPool;
+    private final Map<Block, Buffer> bufferMap;
+    private final LRUReplacement lruReplacement;
     private int totalAvailable;
 
     public BufferManager(FileManager fileManager, LogManager logManager, int totalBuffers) {
@@ -16,6 +20,8 @@ public class BufferManager {
         for (int i = 0; i < totalBuffers; i++) {
             bufferPool[i] = new Buffer(fileManager, logManager);
         }
+        this.bufferMap = new HashMap<>();
+        this.lruReplacement = new LRUReplacement();
     }
 
     public synchronized int getTotalAvailable() {
@@ -33,6 +39,7 @@ public class BufferManager {
     public synchronized void unpin(Buffer buffer) {
         buffer.unpin();
         if (!buffer.isPinned()) {
+            lruReplacement.insert(buffer);
             totalAvailable++;
             notifyAll();
         }
@@ -66,31 +73,33 @@ public class BufferManager {
             if (null == buffer) {
                 return null;
             }
+            bufferMap.remove(buffer.getBlock());
             buffer.assignToBlock(block);
         }
         if (!buffer.isPinned()) {
             totalAvailable--;
         }
         buffer.pin();
+        bufferMap.put(buffer.getBlock(), buffer);
         return buffer;
     }
 
     private Buffer findExistingBuffer(Block block) {
-        for (Buffer buffer : bufferPool) {
-            Block newBlock = buffer.getBlock();
-            if (null != newBlock && newBlock.equals(block)) {
-                return buffer;
-            }
+        if (bufferMap.containsKey(block)) {
+            Buffer buffer = bufferMap.get(block);
+            lruReplacement.remove(buffer);
+            return buffer;
         }
         return null;
     }
 
     private Buffer chooseUpinnedBuffer() {
-        for (Buffer buffer : bufferPool) {
-            if (!buffer.isPinned()) {
-                return buffer;
-            }
+        Buffer buffer = lruReplacement.get();
+
+        if (null != buffer) {
+            lruReplacement.remove(buffer);
         }
-        return null;
+
+        return buffer;
     }
 }
