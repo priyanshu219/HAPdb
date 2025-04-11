@@ -13,26 +13,26 @@ public class ViewManager {
         this.tableManager = tableManager;
         if (isNew) {
             Schema schema = new Schema();
-            schema.addStringField("viewname", TableManager.MAX_NAME_LENGTH);
-            schema.addStringField("viewdef", MAX_VIEWDEF);
-            tableManager.createTable("viewcat", schema, transaction);
+            schema.addStringField("view_name", TableManager.MAX_NAME_LENGTH);
+            schema.addStringField("view_def", MAX_VIEWDEF);
+            tableManager.createTable("view_metadata", schema, transaction);
         }
     }
 
     public void createView(String viewName, String viewDef, Transaction transaction) {
-        Layout layout = tableManager.getlayout("viewcat", transaction);
-        TableScan tableScan = new TableScan(transaction, "viewcat", layout);
-        tableScan.setString("viewname", viewName);
-        tableScan.setString("viewdef", viewDef);
+        Layout layout = tableManager.getlayout("view_metadata", transaction);
+        TableScan tableScan = new TableScan(transaction, "view_metadata", layout);
+        tableScan.setString("view_name", viewName);
+        tableScan.setString("view_def", viewDef);
         tableScan.close();
     }
 
-    public String getViewDef(String vName, Transaction transaction) {
-        Layout layout = tableManager.getlayout("viewcat", transaction);
-        TableScan tableScan = new TableScan(transaction, "viewcat", layout);
+    public String getViewDef(String viewName, Transaction transaction) {
+        Layout layout = tableManager.getlayout("view_metadata", transaction);
+        TableScan tableScan = new TableScan(transaction, "view_metadata", layout);
         while (tableScan.next()) {
-            if (tableScan.getString("viewName").equals(vName)) {
-                String result = tableScan.getString("viewdef");
+            if (tableScan.getString("view_name").equals(viewName)) {
+                String result = tableScan.getString("view_def");
                 tableScan.close();
                 return result;
             }

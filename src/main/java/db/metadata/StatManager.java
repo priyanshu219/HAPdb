@@ -17,16 +17,16 @@ public class StatManager {
         refreshStatics(transaction);
     }
 
-    public synchronized StatInfo getStateInfo(String tblName, Layout layout, Transaction transaction) {
+    public synchronized StatInfo getStateInfo(String tableName, Layout layout, Transaction transaction) {
         numCalls++;
         if (numCalls >= 100) {
             numCalls = 0;
             refreshStatics(transaction);
         }
-        StatInfo statInfo = tableStats.get(tblName);
+        StatInfo statInfo = tableStats.get(tableName);
         if (null == statInfo) {
-            statInfo = calcTableStats(tblName, layout, transaction);
-            tableStats.put(tblName, statInfo);
+            statInfo = calcTableStats(tableName, layout, transaction);
+            tableStats.put(tableName, statInfo);
         }
         return statInfo;
     }
@@ -34,19 +34,19 @@ public class StatManager {
     private synchronized void refreshStatics(Transaction transaction) {
         tableStats = new HashMap<>();
         numCalls = 0;
-        Layout tcatLayout = tableManager.getlayout("tblcat", transaction);
-        TableScan tableScan = new TableScan(transaction, "tblcat", tcatLayout);
+        Layout tableMetadataLayout = tableManager.getlayout("table_metadata", transaction);
+        TableScan tableScan = new TableScan(transaction, "table_metadata", tableMetadataLayout);
         while (tableScan.next()) {
-            String tblName = tableScan.getString("tblname");
-            Layout layout = tableManager.getlayout(tblName, transaction);
-            StatInfo statInfo = calcTableStats(tblName, layout, transaction);
-            tableStats.put(tblName, statInfo);
+            String tableName = tableScan.getString("table_name");
+            Layout layout = tableManager.getlayout(tableName, transaction);
+            StatInfo statInfo = calcTableStats(tableName, layout, transaction);
+            tableStats.put(tableName, statInfo);
         }
         tableScan.close();
     }
 
-    private synchronized StatInfo calcTableStats(String tblName, Layout layout, Transaction transaction) {
-        TableScan tableScan = new TableScan(transaction, tblName, layout);
+    private synchronized StatInfo calcTableStats(String tableName, Layout layout, Transaction transaction) {
+        TableScan tableScan = new TableScan(transaction, tableName, layout);
         int totalRecords = 0;
         int totalBlocks = 0;
 

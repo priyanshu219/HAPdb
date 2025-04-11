@@ -15,34 +15,34 @@ public class TableManager {
 
     public TableManager(boolean isNew, Transaction transaction) {
         Schema tcatSchema = new Schema();
-        tcatSchema.addStringField("tblname", MAX_NAME_LENGTH);
-        tcatSchema.addIntField("slotsize");
+        tcatSchema.addStringField("table_name", MAX_NAME_LENGTH);
+        tcatSchema.addIntField("slot_size");
         tcatLayout = new Layout(tcatSchema);
 
         Schema fcatSchema = new Schema();
-        fcatSchema.addStringField("tblname", MAX_NAME_LENGTH);
-        fcatSchema.addStringField("fldname", MAX_NAME_LENGTH);
+        fcatSchema.addStringField("table_name", MAX_NAME_LENGTH);
+        fcatSchema.addStringField("field_name", MAX_NAME_LENGTH);
         fcatSchema.addIntField("type");
         fcatSchema.addIntField("length");
         fcatSchema.addIntField("offset");
         fcatLayout = new Layout(fcatSchema);
     }
 
-    public void createTable(String tblName, Schema schema, Transaction transaction) {
+    public void createTable(String tableName, Schema schema, Transaction transaction) {
         Layout layout = new Layout(schema);
 
-        TableScan tcat = new TableScan(transaction, "tblcat", tcatLayout);
+        TableScan tcat = new TableScan(transaction, "table_metadata", tcatLayout);
         tcat.insert();
-        tcat.setString("tblname", tblName);
-        tcat.setInt("slotsize", layout.getSlotSize());
+        tcat.setString("table_name", tableName);
+        tcat.setInt("slot_size", layout.getSlotSize());
         tcat.close();
 
-        TableScan fcat = new TableScan(transaction, "fldcat", fcatLayout);
+        TableScan fcat = new TableScan(transaction, "field_metadata", fcatLayout);
         fcat.insert();
 
         for (String fieldName : schema.getFields()) {
-            fcat.setString("tblname", tblName);
-            fcat.setString("fldname", fieldName);
+            fcat.setString("table_name", tableName);
+            fcat.setString("field_name", fieldName);
             fcat.setInt("type", schema.getFieldType(fieldName));
             fcat.setInt("length", schema.getFieldLength(fieldName));
             fcat.setInt("offset", layout.getFieldOffset(fieldName));
@@ -51,31 +51,31 @@ public class TableManager {
         fcat.close();
     }
 
-    public Layout getlayout(String tblName, Transaction transaction) {
+    public Layout getlayout(String tableName, Transaction transaction) {
         int size = -1;
-        TableScan tcatScan = new TableScan(transaction, "tblcat", tcatLayout);
-        while (tcatScan.next()) {
-            if (tcatScan.getString("tblname").equals(tblName)) {
-                size = tcatScan.getInt("slotsize");
+        TableScan tableMetadataScan = new TableScan(transaction, "table_metadata", tcatLayout);
+        while (tableMetadataScan.next()) {
+            if (tableMetadataScan.getString("table_name").equals(tableName)) {
+                size = tableMetadataScan.getInt("slot_size");
                 break;
             }
         }
-        tcatScan.close();
+        tableMetadataScan.close();
 
         Schema schema = new Schema();
-        TableScan fldcatScan = new TableScan(transaction, "fldcat", fcatLayout);
+        TableScan fieldMetadataScan = new TableScan(transaction, "field_metadata", fcatLayout);
         Map<String, Integer> offsets = new HashMap<>();
-        while (fldcatScan.next()) {
-            if (fldcatScan.getString("tblname").equals(tblName)) {
-                String fldName = fldcatScan.getString("fldname");
-                int fldType = fldcatScan.getInt("type");
-                int fldLength = fldcatScan.getInt("length");
-                int fldOffset = fldcatScan.getInt("offset");
-                offsets.put(fldName, fldOffset);
-                schema.addField(fldName, fldType, fldLength);
+        while (fieldMetadataScan.next()) {
+            if (fieldMetadataScan.getString("table_name").equals(tableName)) {
+                String fieldName = fieldMetadataScan.getString("field_name");
+                int fieldType = fieldMetadataScan.getInt("type");
+                int fieldLength = fieldMetadataScan.getInt("length");
+                int fieldOffset = fieldMetadataScan.getInt("offset");
+                offsets.put(fieldName, fieldOffset);
+                schema.addField(fieldName, fieldType, fieldLength);
             }
         }
-        fldcatScan.close();
+        fieldMetadataScan.close();
         return new Layout(schema, offsets, size);
     }
 }
