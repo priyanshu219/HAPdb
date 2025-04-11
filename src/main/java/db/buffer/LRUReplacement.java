@@ -15,7 +15,7 @@ public class LRUReplacement {
     }
 
     public void insert(Buffer buffer) {
-        Node node = new Node(buffer, null, null);
+        Node node = new Node(buffer);
         if (null != tail) {
             tail.next = node;
         }
@@ -61,7 +61,7 @@ public class LRUReplacement {
         private Node next;
         private Node prev;
 
-        public Node(Buffer buffer, Node next, Node prev) {
+        public Node(Buffer buffer) {
             this.buffer = buffer;
             this.next = null;
             this.prev = null;

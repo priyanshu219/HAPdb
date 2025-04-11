@@ -10,34 +10,39 @@ import java.util.Map;
 
 public class TableManager {
     public static final int MAX_NAME_LENGTH = 16;
-    private final Layout tcatLayout;
-    private final Layout fcatLayout;
+    private final Layout tableMetadataLayout;
+    private final Layout fieldMetadataLayout;
 
     public TableManager(boolean isNew, Transaction transaction) {
-        Schema tcatSchema = new Schema();
-        tcatSchema.addStringField("table_name", MAX_NAME_LENGTH);
-        tcatSchema.addIntField("slot_size");
-        tcatLayout = new Layout(tcatSchema);
+        Schema tableMetadataSchema = new Schema();
+        tableMetadataSchema.addStringField("table_name", MAX_NAME_LENGTH);
+        tableMetadataSchema.addIntField("slot_size");
+        tableMetadataLayout = new Layout(tableMetadataSchema);
 
-        Schema fcatSchema = new Schema();
-        fcatSchema.addStringField("table_name", MAX_NAME_LENGTH);
-        fcatSchema.addStringField("field_name", MAX_NAME_LENGTH);
-        fcatSchema.addIntField("type");
-        fcatSchema.addIntField("length");
-        fcatSchema.addIntField("offset");
-        fcatLayout = new Layout(fcatSchema);
+        Schema fieldMetadataSchema = new Schema();
+        fieldMetadataSchema.addStringField("table_name", MAX_NAME_LENGTH);
+        fieldMetadataSchema.addStringField("field_name", MAX_NAME_LENGTH);
+        fieldMetadataSchema.addIntField("type");
+        fieldMetadataSchema.addIntField("length");
+        fieldMetadataSchema.addIntField("offset");
+        fieldMetadataLayout = new Layout(fieldMetadataSchema);
+
+        if (isNew) {
+            createTable("table_metadata", tableMetadataSchema, transaction);
+            createTable("field_metadata", fieldMetadataSchema, transaction);
+        }
     }
 
     public void createTable(String tableName, Schema schema, Transaction transaction) {
         Layout layout = new Layout(schema);
 
-        TableScan tcat = new TableScan(transaction, "table_metadata", tcatLayout);
+        TableScan tcat = new TableScan(transaction, "table_metadata", tableMetadataLayout);
         tcat.insert();
         tcat.setString("table_name", tableName);
         tcat.setInt("slot_size", layout.getSlotSize());
         tcat.close();
 
-        TableScan fcat = new TableScan(transaction, "field_metadata", fcatLayout);
+        TableScan fcat = new TableScan(transaction, "field_metadata", fieldMetadataLayout);
         fcat.insert();
 
         for (String fieldName : schema.getFields()) {
@@ -53,7 +58,7 @@ public class TableManager {
 
     public Layout getlayout(String tableName, Transaction transaction) {
         int size = -1;
-        TableScan tableMetadataScan = new TableScan(transaction, "table_metadata", tcatLayout);
+        TableScan tableMetadataScan = new TableScan(transaction, "table_metadata", tableMetadataLayout);
         while (tableMetadataScan.next()) {
             if (tableMetadataScan.getString("table_name").equals(tableName)) {
                 size = tableMetadataScan.getInt("slot_size");
@@ -63,7 +68,7 @@ public class TableManager {
         tableMetadataScan.close();
 
         Schema schema = new Schema();
-        TableScan fieldMetadataScan = new TableScan(transaction, "field_metadata", fcatLayout);
+        TableScan fieldMetadataScan = new TableScan(transaction, "field_metadata", fieldMetadataLayout);
         Map<String, Integer> offsets = new HashMap<>();
         while (fieldMetadataScan.next()) {
             if (fieldMetadataScan.getString("table_name").equals(tableName)) {
