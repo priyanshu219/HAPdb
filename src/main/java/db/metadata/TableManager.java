@@ -36,24 +36,24 @@ public class TableManager {
     public void createTable(String tableName, Schema schema, Transaction transaction) {
         Layout layout = new Layout(schema);
 
-        TableScan tcat = new TableScan(transaction, "table_metadata", tableMetadataLayout);
-        tcat.insert();
-        tcat.setString("table_name", tableName);
-        tcat.setInt("slot_size", layout.getSlotSize());
-        tcat.close();
+        TableScan tableMetadata = new TableScan(transaction, "table_metadata", tableMetadataLayout);
+        tableMetadata.insert();
+        tableMetadata.setString("table_name", tableName);
+        tableMetadata.setInt("slot_size", layout.getSlotSize());
+        tableMetadata.close();
 
-        TableScan fcat = new TableScan(transaction, "field_metadata", fieldMetadataLayout);
-        fcat.insert();
+        TableScan fieldMetadata = new TableScan(transaction, "field_metadata", fieldMetadataLayout);
+        fieldMetadata.insert();
 
         for (String fieldName : schema.getFields()) {
-            fcat.setString("table_name", tableName);
-            fcat.setString("field_name", fieldName);
-            fcat.setInt("type", schema.getFieldType(fieldName));
-            fcat.setInt("length", schema.getFieldLength(fieldName));
-            fcat.setInt("offset", layout.getFieldOffset(fieldName));
+            fieldMetadata.setString("table_name", tableName);
+            fieldMetadata.setString("field_name", fieldName);
+            fieldMetadata.setInt("type", schema.getFieldType(fieldName));
+            fieldMetadata.setInt("length", schema.getFieldLength(fieldName));
+            fieldMetadata.setInt("offset", layout.getFieldOffset(fieldName));
         }
 
-        fcat.close();
+        fieldMetadata.close();
     }
 
     public Layout getlayout(String tableName, Transaction transaction) {
