@@ -61,6 +61,14 @@ public class Page {
         setBytes(offset, bytes);
     }
 
+    public byte[] getCopy() {
+        ByteBuffer byteBuffer = contents();
+        byte[] copyByte = new byte[byteBuffer.capacity()];
+        byteBuffer.get(copyByte);
+
+        return copyByte;
+    }
+
     protected ByteBuffer contents() {
         byteBuffer.position(0);
         return byteBuffer;

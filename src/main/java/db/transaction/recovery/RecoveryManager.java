@@ -3,18 +3,24 @@ package db.transaction.recovery;
 import db.buffer.Buffer;
 import db.buffer.BufferManager;
 import db.file.Block;
+import db.file.Page;
 import db.log.LogManager;
 import db.transaction.Transaction;
 import db.transaction.recovery.LogRecord.RecordType;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 public class RecoveryManager {
     private final LogManager logManager;
     private final BufferManager bufferManager;
     private final Transaction transaction;
+    private final Set<Block> modifiedBlocks;
     private final int txNum;
 
     public RecoveryManager(LogManager logManager, BufferManager bufferManager, Transaction transaction, int txNum) {
@@ -22,6 +28,7 @@ public class RecoveryManager {
         this.txNum = txNum;
         this.logManager = logManager;
         this.bufferManager = bufferManager;
+        this.modifiedBlocks = new HashSet<>();
         StartRecord.writeToLog(logManager, txNum);
     }
 
@@ -57,6 +64,35 @@ public class RecoveryManager {
         return SetStringRecord.writeToLog(logManager, txNum, block, offset, oldValue);
     }
 
+    public void backupBlock(Buffer buffer) {
+        if (checkExistingModifiedBlocks(buffer.getBlock())) {
+            return;
+        }
+
+        String fileName = takeBackup(buffer.getContents(), buffer.getBlock());
+        BlockUpdateRecord.writeToLog(logManager, txNum, buffer.getBlock(), fileName);
+    }
+
+    private String takeBackup(Page page, Block block) {
+        byte[] backUpBytes = page.getCopy();
+        String backupFileName = "block_backups/tx" + txNum + "_" + block.fileName() + "_" + block.blockNumber() + ".bak";
+
+        //TODO: Use filemanager
+        try {
+            Path path = Paths.get(backupFileName);
+            Files.createDirectories(path.getParent());
+            Files.write(path, backUpBytes);
+
+            return backupFileName;
+        } catch (IOException ex) {
+            throw new RuntimeException("Failed to write block backup", ex);
+        }
+    }
+
+    private boolean checkExistingModifiedBlocks(Block block) {
+        return modifiedBlocks.contains(block);
+    }
+
     private void doRollback() {
         Iterator<byte[]> iterator = logManager.iterator();
         while (iterator.hasNext()) {
@@ -72,7 +108,7 @@ public class RecoveryManager {
     }
 
     private void doRecover() {
-        Collection<Integer> finishedTxs = new ArrayList<>();
+        Set<Integer> finishedTxs = new HashSet<>();
         Iterator<byte[]> iterator = logManager.iterator();
 
         while (iterator.hasNext()) {
@@ -83,7 +119,7 @@ public class RecoveryManager {
             }
             if (record.getRecordType() == RecordType.COMMIT || record.getRecordType() == RecordType.ROLLBACK) {
                 finishedTxs.add(record.getTxNumber());
-            } else if (!finishedTxs.contains(record.getTxNumber())) {
+            } else if (record.getRecordType() == RecordType.BLOCK_UPDATE && !finishedTxs.contains(record.getTxNumber())) {
                 record.undo(transaction);
             }
         }

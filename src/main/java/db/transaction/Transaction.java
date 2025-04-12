@@ -51,10 +51,17 @@ public class Transaction {
     public void recover() {
         bufferManager.flushAll(txNum);
         recoveryManager.recover();
+
+        try {
+            LogArchiver.archiveLog("hapdb.log", "log_archive");
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     public void pin(Block block) {
         myBuffers.pin(block);
+        concurrencyManager.sLock(block);
     }
 
     public void setString(Block block, int offset, String value, boolean okToLog) {
@@ -78,6 +85,7 @@ public class Transaction {
         Buffer buffer = myBuffers.getBuffer(block);
         int LSN = -1;
         if (okToLog) {
+            recoveryManager.backupBlock(buffer);
             LSN = recoveryManager.setInt(buffer, offset, value);
         }
         Page page = buffer.getContents();
@@ -86,13 +94,13 @@ public class Transaction {
     }
 
     public int getInt(Block block, int offset) {
-        concurrencyManager.sLock(block);
+//        concurrencyManager.sLock(block);
         Buffer buffer = myBuffers.getBuffer(block);
         return buffer.getContents().getInt(offset);
     }
 
     public String getString(Block block, int offset) {
-        concurrencyManager.sLock(block);
+//        concurrencyManager.sLock(block);
         Buffer buffer = myBuffers.getBuffer(block);
         return buffer.getContents().getString(offset);
     }
@@ -110,10 +118,15 @@ public class Transaction {
     }
 
     public int getBlockSize() {
-        return fileManager.getBlockSize();
+        return FileManager.getBlockSize();
     }
 
     public int availableBuffers() {
         return bufferManager.getTotalAvailable();
+    }
+
+    public void setBytes(Block block, byte[] bytes) {
+        Page page = new Page(bytes);
+        fileManager.write(block, page);
     }
 }
