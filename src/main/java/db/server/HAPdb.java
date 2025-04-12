@@ -28,6 +28,7 @@ public class HAPdb {
     public HAPdb(String directoryName) {
         this(directoryName, BLOCKSIZE, TOTALBUFFERS);
         Transaction transaction = getNewTransaction();
+        transaction.recover();
 
         boolean isNew = fileManager.isNew();
         this.metadataManager = new MetadataManager(isNew, transaction);
