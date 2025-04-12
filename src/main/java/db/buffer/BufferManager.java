@@ -69,6 +69,8 @@ public class BufferManager {
     private Buffer tryToPin(Block block) {
         Buffer buffer = findExistingBuffer(block);
         if (null == buffer) {
+            BufferStats.incrementCacheMiss();
+
             buffer = chooseUpinnedBuffer();
             if (null == buffer) {
                 return null;
@@ -88,6 +90,8 @@ public class BufferManager {
         if (bufferMap.containsKey(block)) {
             Buffer buffer = bufferMap.get(block);
             lruReplacement.remove(buffer);
+
+            BufferStats.incrementCacheHit();
             return buffer;
         }
         return null;

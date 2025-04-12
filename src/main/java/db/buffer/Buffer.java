@@ -17,7 +17,7 @@ public class Buffer {
     public Buffer(FileManager fileManager, LogManager logManager) {
         this.fileManager = fileManager;
         this.logManager = logManager;
-        contents = new Page(fileManager.getBlockSize());
+        contents = new Page(FileManager.getBlockSize());
         this.block = null;
         this.pins = 0;
         this.txnnum = -1;
@@ -53,6 +53,8 @@ public class Buffer {
         this.block = block;
         fileManager.read(block, contents);
         pins = 0;
+
+        BufferStats.incrementBufferReads();
     }
 
     void flush() {
@@ -60,6 +62,8 @@ public class Buffer {
             logManager.flush(lsn);
             fileManager.write(block, contents);
             txnnum = -1;
+
+            BufferStats.incrementBufferWrites();
         }
     }
 
