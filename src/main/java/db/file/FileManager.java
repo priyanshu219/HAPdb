@@ -9,8 +9,8 @@ import java.util.Objects;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class FileManager {
+    private static int blockSize;
     private final File dbDirectory;
-    private final int blockSize;
     private final boolean isNew;
     private final Map<String, RandomAccessFile> openFiles;
 
@@ -19,7 +19,7 @@ public class FileManager {
 
     public FileManager(File dbDirectory, int blockSize) {
         this.dbDirectory = dbDirectory;
-        this.blockSize = blockSize;
+        FileManager.blockSize = blockSize;
         this.openFiles = new HashMap<>();
 
         isNew = !dbDirectory.exists();
@@ -35,6 +35,10 @@ public class FileManager {
                 new File(dbDirectory, filename).delete();
             }
         }
+    }
+
+    public static int getBlockSize() {
+        return blockSize;
     }
 
     public synchronized void read(Block block, Page page) {
@@ -88,10 +92,6 @@ public class FileManager {
 
     public boolean isNew() {
         return isNew;
-    }
-
-    public int getBlockSize() {
-        return blockSize;
     }
 
     public FileStatistics fileStatistics() {
