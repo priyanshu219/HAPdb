@@ -69,6 +69,8 @@ public class RecoveryManager {
             return;
         }
 
+        modifiedBlocks.add(buffer.getBlock());
+
         String fileName = takeBackup(buffer.getContents(), buffer.getBlock());
         BlockUpdateRecord.writeToLog(logManager, txNum, buffer.getBlock(), fileName);
     }

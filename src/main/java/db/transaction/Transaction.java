@@ -125,6 +125,7 @@ public class Transaction {
         Buffer buffer = myBuffers.getBuffer(block);
         int LSN = -1;
         if (okToLog) {
+            recoveryManager.backupBlock(buffer);
             LSN = recoveryManager.setString(buffer, offset, value);
         }
         Page page = buffer.getContents();
