@@ -126,7 +126,7 @@ public class Transaction {
         int LSN = -1;
         if (okToLog) {
             recoveryManager.backupBlock(buffer);
-            LSN = recoveryManager.setString(buffer, offset, value);
+            LSN = recoveryManager.setString(buffer, offset);
         }
         Page page = buffer.getContents();
         page.setString(offset, value);
@@ -143,7 +143,7 @@ public class Transaction {
         int LSN = -1;
         if (okToLog) {
             recoveryManager.backupBlock(buffer);
-            LSN = recoveryManager.setInt(buffer, offset, value);
+            LSN = recoveryManager.setInt(buffer, offset);
         }
         Page page = buffer.getContents();
         page.setInt(offset, value);

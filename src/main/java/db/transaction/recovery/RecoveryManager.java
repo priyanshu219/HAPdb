@@ -52,13 +52,13 @@ public class RecoveryManager {
         logManager.flush(LSN);
     }
 
-    public int setInt(Buffer buffer, int offset, int newValue) {
+    public int setInt(Buffer buffer, int offset) {
         int oldValue = buffer.getContents().getInt(offset);
         Block block = buffer.getBlock();
         return SetIntRecord.writeToLog(logManager, txNum, block, offset, oldValue);
     }
 
-    public int setString(Buffer buffer, int offset, String newValue) {
+    public int setString(Buffer buffer, int offset) {
         String oldValue = buffer.getContents().getString(offset);
         Block block = buffer.getBlock();
         return SetStringRecord.writeToLog(logManager, txNum, block, offset, oldValue);
