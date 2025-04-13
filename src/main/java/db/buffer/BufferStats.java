@@ -30,7 +30,10 @@ public class BufferStats {
     }
 
     public static String statistics() {
-        return "";
+        return "bufferReads: " + bufferReads + "\n" +
+                "bufferWrites: " + bufferWrites + "\n" +
+                "cacheHits: " + cacheHits + "\n" +
+                "cacheMisses: " + cacheMisses + "\n";
     }
 
 
