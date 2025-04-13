@@ -73,6 +73,11 @@ public class RecoveryManager {
         BlockUpdateRecord.writeToLog(logManager, txNum, buffer.getBlock(), fileName);
     }
 
+    public void setCheckpoint() {
+        int LSN = CheckpointRecord.writeToLog(logManager);
+        logManager.flush(LSN);
+    }
+
     private String takeBackup(Page page, Block block) {
         byte[] backUpBytes = page.getCopy();
         String backupFileName = "block_backups/tx" + txNum + "_" + block.fileName() + "_" + block.blockNumber() + ".bak";

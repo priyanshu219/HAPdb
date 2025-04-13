@@ -9,9 +9,18 @@ import db.log.LogManager;
 import db.transaction.concurrency.ConcurrencyManager;
 import db.transaction.recovery.RecoveryManager;
 
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class Transaction {
     private static final int END_OF_FILE = -1;
+    private static final Set<Transaction> activeTxns = ConcurrentHashMap.newKeySet();
+    private static final Object CHECKPOINT_LOCK = new Object();
+    private static final int CHECKPOINT_FREQUENCY = 10;
+    private static final AtomicInteger txnCount = new AtomicInteger(0);
     private static int nextTxNum = 0;
+    private static boolean checkpointInProgress = false;
     private final FileManager fileManager;
     private final RecoveryManager recoveryManager;
     private final BufferManager bufferManager;
@@ -20,12 +29,28 @@ public class Transaction {
     private final BufferList myBuffers;
 
     public Transaction(FileManager fileManager, LogManager logManager, BufferManager bufferManager) {
+        synchronized (CHECKPOINT_LOCK) {
+            while (checkpointInProgress) {
+                try {
+                    CHECKPOINT_LOCK.wait();
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+            activeTxns.add(this);
+        }
+
         this.fileManager = fileManager;
         this.bufferManager = bufferManager;
         this.txNum = nextTxNumber();
         this.recoveryManager = new RecoveryManager(logManager, bufferManager, this, txNum);
         this.concurrencyManager = new ConcurrencyManager();
         myBuffers = new BufferList(bufferManager);
+
+        int cnt = txnCount.incrementAndGet();
+        if (cnt % CHECKPOINT_FREQUENCY == 0) {
+            runQuiescentCheckpoint(recoveryManager);
+        }
     }
 
     private static synchronized int nextTxNumber() {
@@ -34,11 +59,35 @@ public class Transaction {
         return nextTxNum;
     }
 
+    public static void addQuiescentCheckpoint(RecoveryManager recoveryManager) {
+        synchronized (CHECKPOINT_LOCK) {
+            checkpointInProgress = true;
+            while (!activeTxns.isEmpty()) {
+                try {
+                    CHECKPOINT_LOCK.wait();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+
+        recoveryManager.setCheckpoint();
+        checkpointInProgress = false;
+        CHECKPOINT_LOCK.notifyAll();
+    }
+
     public void commit() {
         recoveryManager.commit();
         concurrencyManager.release();
         myBuffers.unpinAll();
         System.out.println("transaction " + txNum + " committed");
+
+        synchronized (CHECKPOINT_LOCK) {
+            activeTxns.remove(this);
+            if (activeTxns.isEmpty()) {
+                CHECKPOINT_LOCK.notifyAll();
+            }
+        }
     }
 
     public void rollback() {
@@ -46,6 +95,13 @@ public class Transaction {
         concurrencyManager.release();
         myBuffers.unpinAll();
         System.out.println("transaction " + txNum + " rolled back");
+
+        synchronized (CHECKPOINT_LOCK) {
+            activeTxns.remove(this);
+            if (activeTxns.isEmpty()) {
+                CHECKPOINT_LOCK.notifyAll();
+            }
+        }
     }
 
     public void recover() {
@@ -127,6 +183,11 @@ public class Transaction {
 
     public void setBytes(Block block, byte[] bytes) {
         Page page = new Page(bytes);
+        concurrencyManager.xLock(block);
         fileManager.write(block, page);
+    }
+
+    public void runQuiescentCheckpoint(RecoveryManager recoveryManager) {
+        new Thread(() -> addQuiescentCheckpoint(recoveryManager)).start();
     }
 }
