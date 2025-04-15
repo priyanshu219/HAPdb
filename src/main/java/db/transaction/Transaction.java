@@ -54,7 +54,7 @@ public class Transaction {
         this.bufferManager = bufferManager;
         this.txNum = nextTxNumber();
         this.recoveryManager = new RecoveryManager(logManager, bufferManager, this, txNum);
-        this.concurrencyManager = new ConcurrencyManager();
+        this.concurrencyManager = new ConcurrencyManager(txNum);
         this.myBuffers = new BufferList(bufferManager);
         this.appendedBlocks = new ArrayList<>();
 

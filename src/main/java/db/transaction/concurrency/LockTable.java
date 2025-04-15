@@ -2,69 +2,92 @@ package db.transaction.concurrency;
 
 import db.file.Block;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class LockTable {
     private static final long MAX_TIME = 10000;
-    private final Map<Block, Integer> locks;
+    private final Map<Block, List<Integer>> sLocks;
+    private final Map<Block, List<Integer>> xLocks;
+
+    private final Map<Block, Object> sLatch;
+    private final Map<Block, Object> xLatch;
 
     public LockTable() {
-        this.locks = new HashMap<>();
+        this.sLocks = new HashMap<>();
+        this.xLocks = new HashMap<>();
+
+        this.sLatch = new HashMap<>();
+        this.xLatch = new HashMap<>();
     }
 
-    public synchronized void sLock(Block block) throws LockAbortException {
+    public synchronized void sLock(Block block, int txNum) throws LockAbortException {
         try {
             long timestamp = System.currentTimeMillis();
+
+            boolean shouldDie = xLocks.get(block).stream().anyMatch(id -> id < txNum);
+            if (shouldDie) {
+                throw new LockAbortException();
+            }
+
+            Object lock = sLatch.computeIfAbsent(block, key -> new Object());
+
             while (hasXLock(block) && !waitingTooLong(timestamp)) {
-                wait(MAX_TIME);
+                lock.wait(MAX_TIME);
             }
             if (hasXLock(block)) {
                 throw new LockAbortException();
             }
-            int val = getLockVal(block);
-            locks.put(block, val + 1);
+            sLocks.computeIfAbsent(block, key -> new ArrayList<>()).add(txNum);
         } catch (InterruptedException ex) {
             throw new LockAbortException();
         }
     }
 
-    public synchronized void xLock(Block block) throws LockAbortException {
+    public synchronized void xLock(Block block, int txNum) throws LockAbortException {
         try {
             long timestamp = System.currentTimeMillis();
-            while (hasOtherSLocks(block) && !waitingTooLong(timestamp)) {
-                wait(MAX_TIME);
+
+            boolean shouldDie = sLocks.get(block).stream().anyMatch(id -> id < txNum);
+            if (shouldDie) {
+                throw new LockAbortException();
             }
+
+            Object lock = xLatch.computeIfAbsent(block, key -> new Object());
+            while (hasOtherSLocks(block) && !waitingTooLong(timestamp)) {
+                lock.wait(MAX_TIME);
+            }
+
             if (hasOtherSLocks(block)) {
                 throw new LockAbortException();
             }
-            locks.put(block, -1);
+            xLocks.computeIfAbsent(block, key -> new ArrayList<>()).add(txNum);
         } catch (InterruptedException ex) {
             throw new LockAbortException();
         }
     }
 
-    public synchronized void unlock(Block block) {
-        int val = getLockVal(block);
-        if (val > 1) {
-            locks.put(block, val - 1);
-        } else {
-            locks.remove(block);
-            notifyAll();
+    public synchronized void unlock(Block block, int txNum) {
+        if (sLocks.get(block).remove((Object) txNum)) {
+            if (sLocks.get(block).isEmpty()) {
+                sLocks.remove(block);
+            }
+            sLatch.get(block).notifyAll();
+        }
+
+        if (xLocks.get(block).remove((Object) txNum)) {
+            if (xLocks.get(block).isEmpty()) {
+                xLocks.remove(block);
+            }
+            xLatch.get(block).notifyAll();
         }
     }
 
     private boolean hasXLock(Block block) {
-        return getLockVal(block) < 0;
+        return !xLocks.get(block).isEmpty();
     }
 
     private boolean hasOtherSLocks(Block block) {
-        return getLockVal(block) > 1;
-    }
-
-    private int getLockVal(Block block) {
-        Integer iVal = locks.get(block);
-        return (iVal == null) ? 0 : iVal;
+        return sLocks.get(block).size() > 1;
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
