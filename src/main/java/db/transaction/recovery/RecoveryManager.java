@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 public class RecoveryManager {
@@ -64,6 +65,11 @@ public class RecoveryManager {
         return SetStringRecord.writeToLog(logManager, txNum, block, offset, oldValue);
     }
 
+    public void appendBlock(Block block) {
+        int LSN = AppendBlockRecord.writeToLog(logManager, txNum, block);
+        logManager.flush(LSN);
+    }
+
     public void backupBlock(Buffer buffer) {
         if (checkExistingModifiedBlocks(buffer.getBlock())) {
             return;
@@ -112,6 +118,11 @@ public class RecoveryManager {
                 record.undo(transaction);
             }
         }
+
+        List<Block> appendedBlocks = transaction.getAppendedBlocks();
+        for (Block appendedBlock : appendedBlocks) {
+            transaction.truncate(appendedBlock);
+        }
     }
 
     private void doRecover() {
@@ -126,8 +137,12 @@ public class RecoveryManager {
             }
             if (record.getRecordType() == RecordType.COMMIT || record.getRecordType() == RecordType.ROLLBACK) {
                 finishedTxs.add(record.getTxNumber());
-            } else if (record.getRecordType() == RecordType.BLOCK_UPDATE && !finishedTxs.contains(record.getTxNumber())) {
-                record.undo(transaction);
+            } else if (!finishedTxs.contains(record.getTxNumber())) {
+                if (record.getRecordType() == RecordType.BLOCK_UPDATE){
+                    record.undo(transaction);
+                } else if (record.getRecordType() == RecordType.APPEND_BLOCK) {
+                    record.undo(transaction);
+                }
             }
         }
     }

@@ -16,6 +16,7 @@ public interface LogRecord {
             case 4 -> new SetIntRecord(page);
             case 5 -> new SetStringRecord(page);
             case 6 -> new BlockUpdateRecord(page);
+            case 7 -> new AppendBlockRecord(page);
             default -> throw new IllegalStateException("Unexpected value: " + page.getInt(0));
         };
     }
@@ -36,6 +37,7 @@ public interface LogRecord {
         ROLLBACK,
         SETINT,
         SETSTRING,
-        BLOCK_UPDATE
+        BLOCK_UPDATE,
+        APPEND_BLOCK
     }
 }

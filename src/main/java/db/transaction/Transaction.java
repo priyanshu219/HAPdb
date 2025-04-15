@@ -9,16 +9,20 @@ import db.log.LogManager;
 import db.transaction.concurrency.ConcurrencyManager;
 import db.transaction.recovery.RecoveryManager;
 
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.List;
 
 public class Transaction {
     private static final int END_OF_FILE = -1;
+
     private static final Set<Transaction> activeTxns = ConcurrentHashMap.newKeySet();
     private static final Object CHECKPOINT_LOCK = new Object();
     private static final int CHECKPOINT_FREQUENCY = 10;
     private static final AtomicInteger txnCount = new AtomicInteger(0);
+
     private static int nextTxNum = 0;
     private static boolean checkpointInProgress = false;
     private final FileManager fileManager;
@@ -27,6 +31,12 @@ public class Transaction {
     private final int txNum;
     private final ConcurrencyManager concurrencyManager;
     private final BufferList myBuffers;
+
+    private final List<Block> appendedBlocks;
+
+    public List<Block> getAppendedBlocks() {
+        return appendedBlocks;
+    }
 
     public Transaction(FileManager fileManager, LogManager logManager, BufferManager bufferManager) {
         synchronized (CHECKPOINT_LOCK) {
@@ -45,11 +55,12 @@ public class Transaction {
         this.txNum = nextTxNumber();
         this.recoveryManager = new RecoveryManager(logManager, bufferManager, this, txNum);
         this.concurrencyManager = new ConcurrencyManager();
-        myBuffers = new BufferList(bufferManager);
+        this.myBuffers = new BufferList(bufferManager);
+        this.appendedBlocks = new ArrayList<>();
 
         int cnt = txnCount.incrementAndGet();
         if (cnt % CHECKPOINT_FREQUENCY == 0) {
-            runQuiescentCheckpoint(recoveryManager);
+            runQuiescentCheckpoint();
         }
     }
 
@@ -69,11 +80,12 @@ public class Transaction {
                     throw new RuntimeException(ex);
                 }
             }
-        }
 
-        recoveryManager.setCheckpoint();
-        checkpointInProgress = false;
-        CHECKPOINT_LOCK.notifyAll();
+
+            recoveryManager.setCheckpoint();
+            checkpointInProgress = false;
+            CHECKPOINT_LOCK.notifyAll();
+        }
     }
 
     public void commit() {
@@ -171,7 +183,16 @@ public class Transaction {
     public Block append(String fileName) {
         Block dummyBlock = new Block(fileName, END_OF_FILE);
         concurrencyManager.xLock(dummyBlock);
-        return fileManager.append(fileName);
+
+        Block appendedBlock = fileManager.append(fileName);
+        appendedBlocks.add(appendedBlock);
+        recoveryManager.appendBlock(appendedBlock);
+
+        return appendedBlock;
+    }
+
+    public void truncate(Block block) {
+        fileManager.truncate(block);
     }
 
     public int getBlockSize() {
@@ -188,7 +209,7 @@ public class Transaction {
         fileManager.write(block, page);
     }
 
-    public void runQuiescentCheckpoint(RecoveryManager recoveryManager) {
+    public void runQuiescentCheckpoint() {
         new Thread(() -> addQuiescentCheckpoint(recoveryManager)).start();
     }
 }

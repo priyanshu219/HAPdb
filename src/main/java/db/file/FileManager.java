@@ -65,6 +65,15 @@ public class FileManager {
         }
     }
 
+    public synchronized void truncate(Block block) {
+        try {
+            RandomAccessFile file = getFile(block.fileName());
+            file.getChannel().truncate((long) block.blockNumber() * blockSize);
+        } catch (IOException ex) {
+            throw new RuntimeException("cannot truncate the file: " + block.fileName());
+        }
+    }
+
     public synchronized Block append(String fileName) {
         int newblknum = length(fileName);
         Block block = new Block(fileName, newblknum);
