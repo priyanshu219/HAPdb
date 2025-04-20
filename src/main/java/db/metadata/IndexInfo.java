@@ -2,6 +2,7 @@ package db.metadata;
 
 import db.index.HashIndex;
 import db.index.Index;
+import db.index.btree.BTreeIndex;
 import db.record.Layout;
 import db.record.Schema;
 import db.transaction.Transaction;
@@ -26,8 +27,8 @@ public class IndexInfo {
     }
 
     public Index open() {
-        Schema schema = new Schema();
-        return new HashIndex(transaction, indexName, indexLayout);
+        return new BTreeIndex(transaction, indexName, indexLayout);
+//        return new HashIndex(transaction, indexName, indexLayout);
     }
 
     public int blockAccessed() {

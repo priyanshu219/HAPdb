@@ -2,6 +2,7 @@ package db.server;
 
 import db.buffer.BufferManager;
 import db.file.FileManager;
+import db.index.planner.IndexUpdatePlanner;
 import db.log.LogManager;
 import db.metadata.MetadataManager;
 import db.planner.*;
@@ -53,7 +54,9 @@ public class HAPdb {
 
     public Planner getPlanner() {
         QueryPlanner queryPlanner = new BasicQueryPlanner(metadataManager);
-        UpdatePlanner updatePlanner = new BasicUpdatePlanner(metadataManager);
+//        UpdatePlanner updatePlanner = new BasicUpdatePlanner(metadataManager);
+        UpdatePlanner updatePlanner = new IndexUpdatePlanner(metadataManager);
         return new Planner(queryPlanner, updatePlanner);
+
     }
 }
