@@ -12,7 +12,7 @@ import db.record.TableScan;
 public class IndexSelectPlan implements Plan {
     private final Plan plan;
     private final IndexInfo indexInfo;
-    private Constant value;
+    private final Constant value;
 
     public IndexSelectPlan(Plan plan, IndexInfo indexInfo, Constant value) {
         this.plan = plan;

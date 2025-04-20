@@ -1,6 +1,5 @@
 package db.metadata;
 
-import db.index.HashIndex;
 import db.index.Index;
 import db.index.btree.BTreeIndex;
 import db.record.Layout;
