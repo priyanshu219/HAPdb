@@ -34,7 +34,7 @@ public class IndexInfo {
     public int blockAccessed() {
         int recordsPerBlock = transaction.getBlockSize() / indexLayout.getSlotSize();
         int numBlocks = statInfo.recordsOutput() / recordsPerBlock;
-        return HashIndex.searchCost(numBlocks, recordsPerBlock);
+        return BTreeIndex.searchCost(numBlocks, recordsPerBlock);
     }
 
     public int recordsOutput() {
